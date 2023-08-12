@@ -1,17 +1,36 @@
-function figP(filename, ext, TNR, valArgCopy)
+function figP(filename, ext, TNR, valArgCopy, valOpenFolder, valOpenFile, valExportPdf)
 
 if(nargin<3) TNR = false; end;
 if(nargin<4) valArgCopy = false; end;
-
-
+if(nargin<5) valOpenFolder = false; end;
+if(nargin<6) valOpenFile = false; end;
+if(nargin<7) valExportPdf = false; end;
 
 tmp = char(ext);
 if(tmp(1) ~= '.')
     ext = strcat('.', ext);
 end
 h=gcf;
-saveas(h, strcat(filename, ext));
+fileNameExt = strcat(filename, ext);
+saveas(h, fileNameExt);
 fprintf(1, ['\t* Zapisano rysunek "%s%s"\n'], filename, ext);
+
+path = fileNameExt;
+if valExportPdf
+    path = strcat(filename, ".pdf");
+end
+if valOpenFolder
+    if ismac
+        [status, results] = system((strcat('open -R "', string(path), '"')));
+    else
+        command = strcat('explorer.exe ', path);
+        dos(command)
+    end
+end
+if valOpenFile
+    finder(char(path));
+end
+
 return
 
 

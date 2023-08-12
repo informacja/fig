@@ -6,14 +6,22 @@ function figPW(varargin)% FigType, ext, katalog)
 % or just (fast version)
 %       figPW
 %
-% Function gets pair of arguments.
-% Example param: copy, maximize, noMargin, hq, axis, hLegend
+% Function gets pair of arguments. (as "copy" above)
+%
+% Example param: copy, maximize, noMargin, hq, axis, hLegend, Interpreter,
+% openFolder, argOpenFile, exportPdf
 %
 % Args are compared case insensitive
+%
+% Example:
+%       figPW("exportPdf", 1, "openFolder", 1)
 
 
 % schowek do pdfa no margin
 % size legend
+% open filo
+% instal ghostscript link
+
 
 % if file exist timestamp add
 %  "figPW(ext = 'png', FigType = 0 do 4, katalog = 'figury/')",...
@@ -42,9 +50,12 @@ valSaveTo = "figury/";
 valDefaultExt = "png";
 valNoTNR = "true";
 valInterpreter = 'tex';
+valOpenFolder = false; 
+valOpenFile = false; 
+valExportPdf = false; 
 % valueAxis = "";
 % valNoMarginPDF = "";
-
+%arguments name
 argCopy = "copy";
 argMaximize = "maximize";
 argNoMargin = "noMargin";
@@ -52,7 +63,10 @@ argHighQuality = "hq"; % png
 argAxis = "axis";
 argHorizontalLegend ="hLegend";
 argInterpreter = "Interpreter";
-argNoMarginPDF = "noMarginPDF";
+% argNoMarginPDF = "noMarginPDF";
+argOpenFolder = "openFolder";
+argOpenFile = "openFile";
+argExportPdf = "exportPdf";
 
 % -- Parser ---------------------------------------------------------------
 
@@ -65,8 +79,11 @@ addOptional(p, 'ext',   valDefaultExt);
 addOptional(p, 'folder',valSaveTo);
 addOptional(p, 'TNR',   valNoTNR);
 addOptional(p, argInterpreter, valInterpreter);
+addOptional(p, argOpenFolder, valOpenFolder);
+addOptional(p, argOpenFile, valOpenFile);
+addOptional(p, argExportPdf, valExportPdf);
 
-optParam = [ argCopy, "TZ1", "TZ2", argNoMargin, argMaximize, argHighQuality, argAxis, argHorizontalLegend argNoMarginPDF];
+optParam = [ argCopy, "TZ1", "TZ2", argNoMargin, argMaximize, argHighQuality, argAxis, argHorizontalLegend ];
 for i = 1:length(optParam)
     addOptional(p,optParam(i),[]);
 end
@@ -81,9 +98,13 @@ if(tmp(1) ~= '.') ext = strcat('.', ext); end
 katalog = p.Results.folder;
 if isstring(p.Results.TNR) TNR = str2num( p.Results.TNR ); else TNR = p.Results.TNR; end
 if isstring(p.Results.copy ) valArgCopy = str2num( p.Results.copy ); else valArgCopy = p.Results.copy; end
-valueAxis = p.Results.axis;
+valueAxis       = p.Results.axis;
 variantHorizontalLegend = p.Results.hLegend;
-valInterpreter = p.Results.Interpreter;
+valInterpreter  = p.Results.Interpreter;
+valOpenFolder   = p.Results.openFolder;
+valOpenFile     = p.Results.openFile;
+valExportPdf    = p.Results.exportPdf;
+
 % addtimestamp TODO
 
 if(nargin<2) ext ='png'; end;
@@ -141,7 +162,7 @@ filenameExt = strcat(folderFilename, ext); % Default filename
 %%%%%%% Fast save %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 if numel(varargin) == 0
-    figP(folderFilename,ext)
+    figP(folderFilename,ext, TNR, valArgCopy, valOpenFolder, valOpenFile, valExportPdf)
     return
 end
 
@@ -307,7 +328,7 @@ if( FigType==3 ) % 3 as is on monitor
     PosFig = get(gca,'Position');
 end
 
-if (~ismember(argNoMarginPDF, p.UsingDefaults))
+if (valExportPdf)
     fileNameEPS = strcat(folderFilename, ".eps");
     exportgraphics(gcf, fileNameEPS, 'ContentType', 'vector');
     mypdf = eps2pdf(fileNameEPS)
@@ -378,7 +399,7 @@ if( FigType==5 ) % 3 as is on monitor
     H = figure(gcf);
     a = get(H,'Position');
     H.WindowState = 'maximized';
-    figP(folderFilename,ext, TNR, valArgCopy);
+    figP(folderFilename,ext, TNR, valArgCopy, valOpenFolder, valOpenFile, valExportPdf);
     set(H,'Position',a);
     return
 end
@@ -389,7 +410,7 @@ if( FigType==6 )
         copygraphics(gcf)
     end
     
-    figP(folderFilename, ext, TNR, valArgCopy)
+    figP(folderFilename, ext, TNR, valArgCopy, valOpenFolder, valOpenFile, valExportPdf)
     return;
 end
 %     figure('Units','centimeters',...
@@ -475,7 +496,7 @@ if (valArgCopy)
     copygraphics(gcf)
 end 
 
-figP(folderFilename, ext)
+figP(folderFilename, ext, TNR, valArgCopy, valOpenFolder, valOpenFile, valExportPdf)
 
 end
 % set(gcf,'Resize','off')
