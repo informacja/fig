@@ -3,7 +3,7 @@ function figPW(varargin)% FigType, ext, katalog)
 %
 % Usage:
 %       figPW("copy", 1) % Figure will be coped to clipboard
-% or just (fast version)
+% or just (fast version) save to file
 %       figPW
 %
 % Function gets pair of arguments. (as "copy" above)
@@ -15,6 +15,7 @@ function figPW(varargin)% FigType, ext, katalog)
 %
 % Example:
 %       figPW("exportPdf", 1, "openFolder", 1)
+
 
 
 % schowek do pdfa no margin
@@ -46,6 +47,7 @@ end
 % p.PartialMatching = 1;
 % p.StructExpand  = 1;
 
+% Arguments default values
 valSaveTo = "figury/";
 valDefaultExt = "png";
 valNoTNR = "true";
@@ -53,9 +55,11 @@ valInterpreter = 'tex';
 valOpenFolder = false; 
 valOpenFile = false; 
 valExportPdf = false; 
+valOverwritePdf = false;
 % valueAxis = "";
 % valNoMarginPDF = "";
-%arguments name
+
+%arguments names
 argCopy = "copy";
 argMaximize = "maximize";
 argNoMargin = "noMargin";
@@ -67,6 +71,7 @@ argInterpreter = "Interpreter";
 argOpenFolder = "openFolder";
 argOpenFile = "openFile";
 argExportPdf = "exportPdf";
+argOverwritePdf = "overwritePdf";
 
 % -- Parser ---------------------------------------------------------------
 
@@ -82,7 +87,9 @@ addOptional(p, argInterpreter, valInterpreter);
 addOptional(p, argOpenFolder, valOpenFolder);
 addOptional(p, argOpenFile, valOpenFile);
 addOptional(p, argExportPdf, valExportPdf);
+addOptional(p, argOverwritePdf, valOverwritePdf);
 
+% without default value
 optParam = [ argCopy, "TZ1", "TZ2", argNoMargin, argMaximize, argHighQuality, argAxis, argHorizontalLegend ];
 for i = 1:length(optParam)
     addOptional(p,optParam(i),[]);
@@ -103,7 +110,8 @@ variantHorizontalLegend = p.Results.hLegend;
 valInterpreter  = p.Results.Interpreter;
 valOpenFolder   = p.Results.openFolder;
 valOpenFile     = p.Results.openFile;
-valExportPdf    = p.Results.exportPdf;
+valExportPdf    = p.Results.exportPdf; 
+valOverwritePdf = p.Results.overwritePdf; 
 
 % addtimestamp TODO
 
@@ -329,13 +337,18 @@ if( FigType==3 ) % 3 as is on monitor
 end
 
 if (valExportPdf)
+    fileNamePDF = strcat(folderFilename, ".pdf");
+    if(valOverwritePdf)
+        if exist(fileNamePDF,'file')
+            delete(char(fileNamePDF));
+        end
+    end
     fileNameEPS = strcat(folderFilename, ".eps");
     exportgraphics(gcf, fileNameEPS, 'ContentType', 'vector');
-    mypdf = eps2pdf(fileNameEPS)
+    mypdf = eps2pdf(fileNameEPS);
 end
 
 if (~ismember(argNoMargin, p.UsingDefaults))
-
 %     prev_contents = clipboard('paste');
 %     copygraphics(gcf);
 %     fig_contents = clipboard('paste');
