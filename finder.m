@@ -68,7 +68,7 @@ if ~found; error('Could not find: %s',foo); end
 %This is Malcolm Wood's original
 if ispc
     % Get just the directory part of the file name.
-    if isfile; foo = fileparts(foo); end
+%     if isfile; foo = fileparts(foo); end % commented by PSW
     if root
         % Open the Explorer window with the Folders tree visible and
         % with this directory as the root

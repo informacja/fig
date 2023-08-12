@@ -23,12 +23,14 @@ if valOpenFolder
     if ismac
         [status, results] = system((strcat('open -R "', string(path), '"')));
     else
-        command = strcat('explorer.exe ', path);
-        dos(command)
+        [filepath,name,ext] = fileparts(path);
+%         winopen(filepath) % open without select file 
+        command = char(strcat("explorer.exe /select,", '"',strcat(pwd,"\",fullfile(filepath,strcat(name,ext))),'"'));
+        dos(command);
     end
 end
 if valOpenFile
-    finder(char(path));
+    finder(char(path))
 end
 
 return
