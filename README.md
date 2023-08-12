@@ -19,4 +19,8 @@ clc; fprintf(1,'Now you can type here "help figPW".\nIf you want save all opened
 
 ## For saving figures without margin to pdf
 
-Install Ghostscript (works only for Win or Linux).
+```matlab
+figPW("exportPdf", 1 ,"openFolder", 1, "TNR", 0) % disable automatic Times New Roman font changing
+```
+
+*Install Ghostscript (works only for Win or Linux)*
