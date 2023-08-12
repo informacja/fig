@@ -19,4 +19,4 @@ clc; fprintf(1,'Now you can type here "help figPW".\nIf you want save all opened
 
 ## For saving figures without margin to pdf
 
-Install Ghostscript (only for Win or Linux).
+Install Ghostscript (works only for Win or Linux).
