@@ -98,11 +98,13 @@ if isempty(pathstr)
     source = fullfile(pathstr,source);
 end
 
-targetName = [sourceName '.pdf'];
+targetName = strcat(sourceName, '.pdf');
 target = fullfile(pathstr,targetName);    % target - pdf file
 
 tmpFileName = sourceName;
 tmpFile = fullfile(pathstr,[tmpFileName ext '.eps2pdf~']);
+
+tmpFile = fullfile( pathstr, strcat(tmpFileName, ext));
 
 
 % Create tmp file,...
@@ -113,7 +115,8 @@ if ~ok
     if nargout > 1,  msg = status;  else, disp(status); end;
 else
     % Run Ghostscript
-    comandLine = ['"' fullGsPath '"' ' ' GS_PARAMETERS ' -sOutputFile=' '"' target '"' ' -f ' '"' tmpFile '"'];
+%     comandLine = strcat('"', fullGsPath, '" ', ' ', GS_PARAMETERS, ' -sOutputFile=', '"', target, '"', ' -f ', '"', tmpFile, '"');
+    comandLine = strcat( fullGsPath, " ", GS_PARAMETERS, ' -sOutputFile=', '"', target, '"', " -f ", '"', tmpFile, '"'); % edited by PSW
     [stat, result] = system(comandLine);
     if stat
         status = ['pdf file not created - error running Ghostscript - check GS path: ' result];
