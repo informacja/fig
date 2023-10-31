@@ -1,5 +1,5 @@
 # fig 💽
-Simple saving figures library for Matlab
+Simple saving figures library for Matlab. Auto generate saved vector graphic(eg. PDF) filename 
 
 ### Library installation
 Copy and paste this in your MATLAB console
