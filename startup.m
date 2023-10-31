@@ -1,21 +1,21 @@
 
 % edit(fullfile(userpath,'startup.m'))
 
-% install script version  0.0.0.1
+% install script version  0.0.0.2
 cd(fullfile(userpath));
 
-% try catch, webwrite
+% TODO try catch, webwrite
 if ~isfile('figPSW.m')
- path(1) = urlwrite ('https://raw.githubusercontent.com/informacja/MTF/main/figPSW.m', 'figPSW.m');
+ path(1) = urlwrite ('https://github.com/informacja/fig/main/figPSW.m', 'figPSW.m');
 end
 
 if ~isfile('figPW.m')
- path(2) = urlwrite ('https://raw.githubusercontent.com/informacja/MTF/main/figPW1.m', 'figPW.m')
+ path(2) = urlwrite ('https://github.com/informacja/fig/main/figPW.m', 'figPW.m')
 end
 
 if ~isfile('figP.m')
- path(3) = urlwrite ('https://raw.githubusercontent.com/informacja/MTF/main/figP.m', 'figP.m');
+ path(3) = urlwrite ('https://github.com/informacja/fig/main/figP.m', 'figP.m');
 end
 
-addpath(fullfile(userpath))
-savepath
+addpath(fullfile(userpath)) 
+savepath % if warnings try run MATLAB as admin
