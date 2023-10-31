@@ -17,5 +17,13 @@ if ~isfile('figP.m')
     urlwrite ('https://raw.githubusercontent.com/informacja/fig/main/figP.m', 'figP.m')
 end
 
+if ~isfile('eps2pdf.m')
+    urlwrite ('https://raw.githubusercontent.com/informacja/fig/main/eps2pdf.m', 'eps2pdf.m');
+end
+
+if ~isfile('finder.m')
+     urlwrite ('https://raw.githubusercontent.com/informacja/fig/main/finder.m', 'finder.m');
+end
+
 addpath(fullfile(userpath)) 
 savepath % if warnings try run MATLAB as admin
