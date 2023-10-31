@@ -8,15 +8,13 @@ function figPW(varargin)% FigType, ext, katalog)
 %
 % Function gets pair of arguments. (as "copy" above)
 %
-% Example param: copy, maximize, noMargin, hq, axis, hLegend, Interpreter,
+% Example param: copy, maximize, noMargin, hqPNG, axis, hLegend, Interpreter,
 % openFolder, argOpenFile, exportPdf
 %
 % Args are compared case insensitive
 %
-% Example:
-%       figPW("exportPdf", 1, "openFolder", 1)
-
-
+% Example: % for PhD students
+%       figPW("exportPdf", 1, "openFolder", 1, "TNR", 0, "styleLudwin", 1, "overwritePdf", 1) 
 
 % schowek do pdfa no margin
 % size legend
@@ -56,6 +54,7 @@ valOpenFolder = false;
 valOpenFile = false; 
 valExportPdf = false; 
 valOverwritePdf = false;
+valStyleLudwin = false;
 % valueAxis = "";
 % valNoMarginPDF = "";
 
@@ -63,7 +62,7 @@ valOverwritePdf = false;
 argCopy = "copy";
 argMaximize = "maximize";
 argNoMargin = "noMargin";
-argHighQuality = "hq"; % png
+argHighQualityPNG = "hqPNG";
 argAxis = "axis";
 argHorizontalLegend ="hLegend";
 argInterpreter = "Interpreter";
@@ -72,6 +71,7 @@ argOpenFolder = "openFolder";
 argOpenFile = "openFile";
 argExportPdf = "exportPdf";
 argOverwritePdf = "overwritePdf";
+argStyleLudwin = "styleLudwin";
 
 % -- Parser ---------------------------------------------------------------
 
@@ -88,9 +88,10 @@ addOptional(p, argOpenFolder, valOpenFolder);
 addOptional(p, argOpenFile, valOpenFile);
 addOptional(p, argExportPdf, valExportPdf);
 addOptional(p, argOverwritePdf, valOverwritePdf);
+addOptional(p, argStyleLudwin, valStyleLudwin);
 
 % without default value
-optParam = [ argCopy, "TZ1", "TZ2", argNoMargin, argMaximize, argHighQuality, argAxis, argHorizontalLegend ];
+optParam = [ argCopy, "TZ1", "TZ2", argNoMargin, argMaximize, argHighQualityPNG, argAxis, argHorizontalLegend];
 for i = 1:length(optParam)
     addOptional(p,optParam(i),[]);
 end
@@ -112,10 +113,11 @@ valOpenFolder   = p.Results.openFolder;
 valOpenFile     = p.Results.openFile;
 valExportPdf    = p.Results.exportPdf; 
 valOverwritePdf = p.Results.overwritePdf; 
+valStyleLudwin  = p.Results.styleLudwin;
 
 % addtimestamp TODO
 
-if(nargin<2) ext ='png'; end;
+if(nargin<2) ext = 'png'; end;
 % if(nargin<3) katalog = 'figury/'; end;
 
 if ~exist(katalog, 'dir') mkdir (katalog); end;
@@ -170,7 +172,7 @@ filenameExt = strcat(folderFilename, ext); % Default filename
 %%%%%%% Fast save %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 if numel(varargin) == 0
-    figP(folderFilename,ext, TNR, valArgCopy, valOpenFolder, valOpenFile, valExportPdf)
+    figP(folderFilename, ext, TNR, valArgCopy, valOpenFolder, valOpenFile, valExportPdf)
     return
 end
 
@@ -253,9 +255,39 @@ if (~ismember(argAxis, p.UsingDefaults))
     end
 end
 
+%%%%%%% Style %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+if (~ismember(argStyleLudwin, p.UsingDefaults))
+    if (valStyleLudwin)
+        grid on
+        grid minor
+        set(gca,'FontSize',11);
+        h=get(gca,'xlabel');
+%         set(h, 'FontSize', 11) 
+        set(h,'Interpreter','latex');
+        h=get(gca,'ylabel');
+%         set(h, 'FontSize', 11) 
+        set(h,'Interpreter','latex');
+        %todo Z label
+%         
+%         childs = get( gcf, 'Children' );
+%         for(childAxInx = 1:length(childs) )
+%             ca = childs(childAxInx);
+%             type = get( ca, 'type' );
+%             if type ~= "axes"
+%                 continue
+%             end
+%             xlim(ca, valueAxis)
+%             ylim(ca, valueAxis)
+%     %         set(ca, "axes", valueAxis); % not work because field is readOnly
+%         end
+    end
+end
+
 %%%%%%% PNG HQ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-if (~ismember(argHighQuality, p.UsingDefaults))
+if (~ismember(argHighQualityPNG, p.UsingDefaults))
 %     figP(folderFilename, ext )% copyOnly
 %     quality
     if (valArgCopy)
@@ -264,8 +296,7 @@ if (~ismember(argHighQuality, p.UsingDefaults))
     end 
 
     print( filenameExt, '-dpng', '-r300'); % Zapisz jako tenMPlik_nrOstatniejFigury.png
-    fprintf("\t*%s\n", strcat("Zapisano w wysokiej jakości: ", filenameExt));
-    return % jeżeli mniej niż 2 parametry
+    fprintf("\t*%s\n", strcat("Zapisano w wysokiej jakości przed procesem skalowania: ", filenameExt));
 end
 
 %%%%%%% Figure Scaling %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -343,9 +374,13 @@ if (valExportPdf)
             delete(char(fileNamePDF));
         end
     end
-    fileNameEPS = strcat(folderFilename, ".eps");
-    exportgraphics(gcf, fileNameEPS, 'ContentType', 'vector');
-    mypdf = eps2pdf(fileNameEPS);
+%     fileNameEPS = strcat(folderFilename, ".eps");
+%     exportgraphics(gcf, fileNameEPS, 'ContentType', 'vector');
+
+    exportgraphics(gcf, fileNamePDF,'ContentType','vector',...
+               'BackgroundColor','none')
+    fprintf(1,"\t* Zapisano PDF:  %s\n", fileNamePDF);
+%     mypdf = eps2pdf(fileNameEPS);
 end
 
 if (~ismember(argNoMargin, p.UsingDefaults))
