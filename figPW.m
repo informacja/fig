@@ -143,9 +143,9 @@ end
 if( isempty(SGtitle) )
     title=get(h1,'string');
     if( isempty(title) )
-        if(nargin<1)
-        else
+        if(nargin<=1)
             fTitle = [ datestr(now ,'yyyy-mm-dd_HH.MM.ss') '_'];
+        else
         end
     else
         fTitle = strcat(title, "_");
@@ -260,16 +260,81 @@ end
 
 if (~ismember(argStyleLudwin, p.UsingDefaults))
     if (valStyleLudwin)
-        grid on
-        grid minor
-        set(gca,'FontSize',11);
+        
+        arrayfun(@(x) grid(x,'on'), findobj(gcf,'Type','axes'))
+        arrayfun(@(x) grid(x,'minor'), findobj(gcf,'Type','axes'))
+
+%         grid minor
+        
+        childs = get( gcf, 'Children' );
+    for(childAxInx = 1:length(childs) )
+       
+        ca = childs(childAxInx);
+
+        FontSizeTitle = 12;
+        FontSizeLabels = 10;
+        FontSizeTicks = 8;
+        FontSizeLegend = 8;
+        sgTitleFontSize = 15;
+
+        type = get( ca, 'type' );
+
+        if( 1 == strcmp( type, 'axes' ))
+
+            set(gca,'FontSize',11);
         h=get(gca,'xlabel');
 %         set(h, 'FontSize', 11) 
         set(h,'Interpreter','latex');
         h=get(gca,'ylabel');
 %         set(h, 'FontSize', 11) 
         set(h,'Interpreter','latex');
+        h=get(gca,'zlabel');
+%         set(h, 'FontSize', 11) 
+        set(h,'Interpreter','latex');
+        
         %todo Z label
+            continue
+        end
+%         set(ca,...
+%             'FontName',font,...
+%             'FontUnits','points',...
+%             'FontWeight','normal',...
+%             'FontSize',FontSizeTicks);
+%         type = get( ca, 'type' );
+
+
+% set(findobj(gcf,'type','axes'),'FontName','Calibri','FontSize',11, ...
+% 'FontWeight','Bold', 'LineWidth', 1,'layer','top');grid on
+
+        if( 1 == strcmp( type, 'legend' )) 
+            continue;
+        end
+% 
+%         set(get(ca,'Xlabel'), ...
+%             'FontUnits','points',...
+%             'FontWeight','normal',...
+%             'FontSize',FontSizeLabels,...
+%             'Interpreter',valInterpreter,...
+%             'FontName',font);
+%         set(get(ca,'Ylabel'),...
+%             'FontUnits','points',...
+%             'FontWeight','normal',...
+%             'FontSize',FontSizeLabels,...
+%             'Interpreter',valInterpreter,...
+%             'FontName',font);
+%         set(get(ca,'Title'),...
+%             'FontUnits','points',...
+%             'FontWeight','normal',...
+%             'FontSize',FontSizeTitle,...
+%             'Interpreter',valInterpreter,...
+%             'FontName',font);
+%         set(get(ca,'Legend'),...
+%             'FontUnits','points',...
+%             'FontSize',FontSizeLegend,...
+%             'Interpreter',valInterpreter,...
+%             'Location','NorthEast',...
+%             'FontName',font);
+    end
 %         
 %         childs = get( gcf, 'Children' );
 %         for(childAxInx = 1:length(childs) )
@@ -379,7 +444,7 @@ if (valExportPdf)
 
     exportgraphics(gcf, fileNamePDF,'ContentType','vector',...
                'BackgroundColor','none')
-    fprintf(1,"\t* Zapisano wektorowy PDF:  %s\n", fileNamePDF);
+    fprintf(1,'\t* Zapisano wektorowy PDF:  "%s"\n', fileNamePDF);
 %     mypdf = eps2pdf(fileNameEPS);
 end
 
