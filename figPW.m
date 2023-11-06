@@ -3,18 +3,18 @@ function figPW(varargin)% FigType, ext, katalog)
 %
 % Usage:
 %       figPW("copy", 1) % Figure will be coped to clipboard
-% or just (fast version) save to file
+% or just (fast version) save to file with timestamp
 %       figPW
 %
 % Function gets pair of arguments. (as "copy" above)
 %
-% Example param: copy, maximize, noMargin, hqPNG, axis, hLegend, Interpreter,
-% openFolder, argOpenFile, exportPdf
+% Example param: copy, maxF, noMargin, hqPNG, axis, hLegend, Interpreter,
+% openFolder, argOpenFile, exportPdf, timestamp, overwrite
 %
 % Args are compared case insensitive
 %
 % Example: % for PhD students
-%       figPW("exportPdf", 1, "openFolder", 1, "TNR", 0, "styleLudwin", 1, "overwritePdf", 1) 
+%       figPW("exportPdf", 1, "openFolder", 1, "TNR", 0, "styleLudwin", 1, "overwrite", 1) 
 
 % schowek do pdfa no margin
 % size legend
@@ -53,8 +53,9 @@ valInterpreter = 'tex';
 valOpenFolder = false; 
 valOpenFile = false; 
 valExportPdf = false; 
-valOverwritePdf = false;
+valOverwrite = false;
 valStyleLudwin = false;
+valTimestamp = false;
 % valueAxis = "";
 % valNoMarginPDF = "";
 
@@ -70,8 +71,9 @@ argInterpreter = "Interpreter";
 argOpenFolder = "openFolder";
 argOpenFile = "openFile";
 argExportPdf = "exportPdf";
-argOverwritePdf = "overwritePdf";
+argOverwrite = "overwrite";
 argStyleLudwin = "styleLudwin";
+argTimestamp = "timestamp";
 
 % -- Parser ---------------------------------------------------------------
 
@@ -87,8 +89,9 @@ addOptional(p, argInterpreter, valInterpreter);
 addOptional(p, argOpenFolder, valOpenFolder);
 addOptional(p, argOpenFile, valOpenFile);
 addOptional(p, argExportPdf, valExportPdf);
-addOptional(p, argOverwritePdf, valOverwritePdf);
+addOptional(p, argOverwrite, valOverwrite);
 addOptional(p, argStyleLudwin, valStyleLudwin);
+addOptional(p, argTimestamp, valTimestamp);
 
 % without default value
 optParam = [ argCopy, "TZ1", "TZ2", argNoMargin, argMaxF, argHighQualityPNG, argAxis, argHorizontalLegend];
@@ -112,10 +115,10 @@ valInterpreter  = p.Results.Interpreter;
 valOpenFolder   = p.Results.openFolder;
 valOpenFile     = p.Results.openFile;
 valExportPdf    = p.Results.exportPdf; 
-valOverwritePdf = p.Results.overwritePdf; 
+valOverwrite = p.Results.overwrite; 
 valStyleLudwin  = p.Results.styleLudwin;
-% valMaxF         = p.Results.valMaxF;
-% addtimestamp TODO
+% valMaxF         = p.Results.valMaxF; todo
+valTimestamp = p.Results.timestamp;
 
 if(nargin<2) ext = 'png'; end;
 % if(nargin<3) katalog = 'figury/'; end;
@@ -140,11 +143,13 @@ catch
     disp('Error getting sgtitle')
 end
 
+tsAdded = false;
 if( isempty(SGtitle) )
     title=get(h1,'string');
     if( isempty(title) )
         if(nargin<=1)
             fTitle = [ datestr(now ,'yyyy-mm-dd_HH.MM.ss') '_'];
+            tsAdded = true;
         else
         end
     else
@@ -155,6 +160,9 @@ else
     fTitle = strcat(SGtitle, "_");
 end
 nrName = get( get(gcf,'Number'), 'Name' );
+if(valTimestamp)
+    if(~tsAdded) fTitle = [ datestr(now ,'yyyy-mm-dd_HH.MM.ss') '_']; end    
+end
 % title([{'Dziedzina czasu'},{'Cha-ka skokowa'}]);
 % xlabel('O rzeczywista'); ylabel('O urojona');
 % legend(str{:});
@@ -182,7 +190,7 @@ end
 %%%%%%% Fast save %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 if numel(varargin) == 0
-    figP(folderFilename, ext, TNR, valArgCopy, valOpenFolder, valOpenFile, valExportPdf)
+    figP(folderFilename, ext, TNR, valArgCopy, valOpenFolder, valOpenFile, valExportPdf, valOverwrite)
     return
 end
 
@@ -386,7 +394,13 @@ h=gcf; % for saveas()
 defaultExtension = '.fig';
 if( strcmpi(ext, defaultExtension) == 0 ) % case insensitive
     if(defaultExtension(1) ~= '.') defaultExtension = strcat('.', defaultExtension); end
-    saveas(h, strcat(folderFilename, defaultExtension));
+    fileNameExt = strcat(folderFilename, defaultExtension);
+    if(valOverwrite)
+        if(exist(fileNameExt, 'file'))
+            delete(fileNameExt);
+        end
+    end
+    saveas(h, fileNameExt);
     fprintf(1, '\t* Zapisano kopię: "%s%s"\n', folderFilename, defaultExtension);
 end
 
@@ -444,7 +458,7 @@ end
 
 if (valExportPdf)
     fileNamePDF = strcat(folderFilename, ".pdf");
-    if(valOverwritePdf)
+    if(valOverwrite)
         if exist(fileNamePDF,'file')
             delete(char(fileNamePDF));
         end
@@ -522,7 +536,7 @@ if( FigType==5 ) % 3 as is on monitor
     H = figure(gcf);
     a = get(H,'Position');
     H.WindowState = 'maximized';
-    figP(folderFilename,ext, TNR, valArgCopy, valOpenFolder, valOpenFile, valExportPdf);
+    figP(folderFilename,ext, TNR, valArgCopy, valOpenFolder, valOpenFile, valExportPdf, valOverwrite);
     set(H,'Position',a);
     return
 end
@@ -533,7 +547,7 @@ if( FigType==6 )
         copygraphics(gcf)
     end
     
-    figP(folderFilename, ext, TNR, valArgCopy, valOpenFolder, valOpenFile, valExportPdf)
+    figP(folderFilename, ext, TNR, valArgCopy, valOpenFolder, valOpenFile, valExportPdf, valOverwrite)
     return;
 end
 %     figure('Units','centimeters',...
@@ -619,7 +633,7 @@ if (valArgCopy)
     copygraphics(gcf)
 end 
 
-figP(folderFilename, ext, TNR, valArgCopy, valOpenFolder, valOpenFile, valExportPdf)
+figP(folderFilename, ext, TNR, valArgCopy, valOpenFolder, valOpenFile, valExportPdf, valOverwrite)
 
 end
 % set(gcf,'Resize','off')

@@ -1,10 +1,11 @@
-function figP(filename, ext, TNR, valArgCopy, valOpenFolder, valOpenFile, valExportPdf)
+function figP(filename, ext, TNR, valArgCopy, valOpenFolder, valOpenFile, valExportPdf, valOverwrite)
 
 if(nargin<3) TNR = false; end;
 if(nargin<4) valArgCopy = false; end;
 if(nargin<5) valOpenFolder = false; end;
 if(nargin<6) valOpenFile = false; end;
-if(nargin<7) valExportPdf = false; end;
+if(nargin<7) valExportPdf = false; end
+if(nargin<8) valOverwrite = false; end
 
 tmp = char(ext);
 if(tmp(1) ~= '.')
@@ -12,6 +13,11 @@ if(tmp(1) ~= '.')
 end
 h=gcf;
 fileNameExt = strcat(filename, ext);
+if(valOverwrite)
+    if(exist(fileNameExt, 'file'))
+        delete(fileNameExt);
+    end
+end
 saveas(h, fileNameExt);
 fprintf(1, ['\t* Zapisano rastrowy rysunek: "%s%s"\n'], filename, ext);
 
