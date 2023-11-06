@@ -13,7 +13,7 @@ end
 h=gcf;
 fileNameExt = strcat(filename, ext);
 saveas(h, fileNameExt);
-fprintf(1, ['\t* Zapisano rysunek "%s%s"\n'], filename, ext);
+fprintf(1, ['\t* Zapisano rastrowy rysunek "%s%s"\n'], filename, ext);
 
 path = fileNameExt;
 if valExportPdf
