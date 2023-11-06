@@ -60,7 +60,7 @@ valStyleLudwin = false;
 
 %arguments names
 argCopy = "copy";
-argMaximize = "maximize";
+argMaxF = "maxF";
 argNoMargin = "noMargin";
 argHighQualityPNG = "hqPNG";
 argAxis = "axis";
@@ -91,7 +91,7 @@ addOptional(p, argOverwritePdf, valOverwritePdf);
 addOptional(p, argStyleLudwin, valStyleLudwin);
 
 % without default value
-optParam = [ argCopy, "TZ1", "TZ2", argNoMargin, argMaximize, argHighQualityPNG, argAxis, argHorizontalLegend];
+optParam = [ argCopy, "TZ1", "TZ2", argNoMargin, argMaxF, argHighQualityPNG, argAxis, argHorizontalLegend];
 for i = 1:length(optParam)
     addOptional(p,optParam(i),[]);
 end
@@ -114,7 +114,7 @@ valOpenFile     = p.Results.openFile;
 valExportPdf    = p.Results.exportPdf; 
 valOverwritePdf = p.Results.overwritePdf; 
 valStyleLudwin  = p.Results.styleLudwin;
-
+% valMaxF         = p.Results.valMaxF;
 % addtimestamp TODO
 
 if(nargin<2) ext = 'png'; end;
@@ -168,6 +168,16 @@ if(size(filename,1) > 1) filename = filename(1);end;
 folderFilename = strcat(folderName,filename);
 
 filenameExt = strcat(folderFilename, ext); % Default filename
+
+if (~ismember(argMaxF, p.UsingDefaults))
+%     if(valMaxF)
+%      a = get(gcf,'Position');
+%      gcf.WindowState = 'maximized';
+set(gcf, 'Position', get(0, 'Screensize'));
+%      jFrame = get(handle(gcf),'JavaFrame');
+%      jFrame.setMaximized(true);
+%     end
+end
 
 %%%%%%% Fast save %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -280,18 +290,18 @@ if (~ismember(argStyleLudwin, p.UsingDefaults))
         type = get( ca, 'type' );
 
         if( 1 == strcmp( type, 'axes' ))
-
-            set(gca,'FontSize',11);
-        h=get(gca,'xlabel');
-%         set(h, 'FontSize', 11) 
-        set(h,'Interpreter','latex');
-        h=get(gca,'ylabel');
-%         set(h, 'FontSize', 11) 
-        set(h,'Interpreter','latex');
-        h=get(gca,'zlabel');
-%         set(h, 'FontSize', 11) 
-        set(h,'Interpreter','latex');
-        
+    
+            set(ca,'FontSize',11);
+            h=get(ca,'xlabel');
+    %         set(h, 'FontSize', 11) 
+            set(h,'Interpreter','latex');
+            h=get(ca,'ylabel');
+    %         set(h, 'FontSize', 11) 
+            set(h,'Interpreter','latex');
+            h=get(ca,'zlabel');
+    %         set(h, 'FontSize', 11) 
+            set(h,'Interpreter','latex');
+            
         %todo Z label
             continue
         end
