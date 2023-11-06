@@ -379,7 +379,7 @@ if (valExportPdf)
 
     exportgraphics(gcf, fileNamePDF,'ContentType','vector',...
                'BackgroundColor','none')
-    fprintf(1,"\t* Zapisano PDF:  %s\n", fileNamePDF);
+    fprintf(1,"\t* Zapisano wektorowy PDF:  %s\n", fileNamePDF);
 %     mypdf = eps2pdf(fileNameEPS);
 end
 
