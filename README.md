@@ -28,4 +28,4 @@ figPW("exportPdf", 1, "overwrite", 1, "openFolder", 1, "TNR", 0) % disable autom
  -->
 
  
-* If you have deleted or permission error, check you have opened file in PDF reader*
+*If you have deleted or permission error, check you have opened file in PDF reader*
