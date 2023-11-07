@@ -14,7 +14,7 @@ function figPW(varargin)% FigType, ext, katalog)
 % Args are compared case insensitive
 %
 % Example: % for PhD students
-%       figPW("exportPdf", 1, "openFolder", 1, "TNR", 0, "styleLudwin", 1, "overwrite", 1) 
+%       figPW("exportPdf", 1, "openFolder", 1, "TNR", 0, "styleLudwin", 1, "overwrite", 1)
 
 % schowek do pdfa no margin
 % size legend
@@ -50,9 +50,9 @@ valSaveTo = "figury/";
 valDefaultExt = "png";
 valNoTNR = "true";
 valInterpreter = 'tex';
-valOpenFolder = false; 
-valOpenFile = false; 
-valExportPdf = false; 
+valOpenFolder = false;
+valOpenFile = false;
+valExportPdf = false;
 valOverwrite = false;
 valStyleLudwin = false;
 valTimestamp = false;
@@ -114,8 +114,8 @@ variantHorizontalLegend = p.Results.hLegend;
 valInterpreter  = p.Results.Interpreter;
 valOpenFolder   = p.Results.openFolder;
 valOpenFile     = p.Results.openFile;
-valExportPdf    = p.Results.exportPdf; 
-valOverwrite = p.Results.overwrite; 
+valExportPdf    = p.Results.exportPdf;
+valOverwrite = p.Results.overwrite;
 valStyleLudwin  = p.Results.styleLudwin;
 % valMaxF         = p.Results.valMaxF; todo
 valTimestamp = p.Results.timestamp;
@@ -161,7 +161,7 @@ else
 end
 nrName = get( get(gcf,'Number'), 'Name' );
 if(valTimestamp)
-    if(~tsAdded) fTitle = [ datestr(now ,'yyyy-mm-dd_HH.MM.ss') '_']; end    
+    if(~tsAdded) fTitle = [ datestr(now ,'yyyy-mm-dd_HH.MM.ss') '_']; end
 end
 % title([{'Dziedzina czasu'},{'Cha-ka skokowa'}]);
 % xlabel('O rzeczywista'); ylabel('O urojona');
@@ -178,13 +178,13 @@ folderFilename = strcat(folderName,filename);
 filenameExt = strcat(folderFilename, ext); % Default filename
 
 if (~ismember(argMaxF, p.UsingDefaults))
-%     if(valMaxF)
-%      a = get(gcf,'Position');
-%      gcf.WindowState = 'maximized';
-set(gcf, 'Position', get(0, 'Screensize'));
-%      jFrame = get(handle(gcf),'JavaFrame');
-%      jFrame.setMaximized(true);
-%     end
+    %     if(valMaxF)
+    %      a = get(gcf,'Position');
+    %      gcf.WindowState = 'maximized';
+    set(gcf, 'Position', get(0, 'Screensize'));
+    %      jFrame = get(handle(gcf),'JavaFrame');
+    %      jFrame.setMaximized(true);
+    %     end
 end
 
 %%%%%%% Fast save %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -211,12 +211,19 @@ if ( TNR )
         type = get( ca, 'type' );
 
         if( 1 == strcmp( type, 'subplottext' ))
-
             set(ca,...
                 'FontName',font,...
                 'FontUnits','points',...
                 'FontWeight','normal',...
                 'FontSize',sgTitleFontSize);
+            continue
+        end
+        if( 1 == strcmp( type, 'colorbar' ))
+            set(ca,...
+                'FontName',font,...
+                'FontWeight','normal',...
+                'FontSize',FontSizeTicks);
+            type = get( ca, 'type' );
             continue
         end
         set(ca,...
@@ -226,7 +233,7 @@ if ( TNR )
             'FontSize',FontSizeTicks);
         type = get( ca, 'type' );
 
-        if( 1 == strcmp( type, 'legend' )) 
+        if( 1 == strcmp( type, 'legend' ))
             continue;
         end
 
@@ -269,7 +276,7 @@ if (~ismember(argAxis, p.UsingDefaults))
         end
         xlim(ca, valueAxis)
         ylim(ca, valueAxis)
-%         set(ca, "axes", valueAxis); % not work because field is readOnly
+        %         set(ca, "axes", valueAxis); % not work because field is readOnly
     end
 end
 
@@ -278,105 +285,105 @@ end
 
 if (~ismember(argStyleLudwin, p.UsingDefaults))
     if (valStyleLudwin)
-        
+
         arrayfun(@(x) grid(x,'on'), findobj(gcf,'Type','axes'))
         arrayfun(@(x) grid(x,'minor'), findobj(gcf,'Type','axes'))
 
-%         grid minor
-        
+        %         grid minor
+
         childs = get( gcf, 'Children' );
-    for(childAxInx = 1:length(childs) )
-       
-        ca = childs(childAxInx);
+        for(childAxInx = 1:length(childs) )
 
-        FontSizeTitle = 12;
-        FontSizeLabels = 10;
-        FontSizeTicks = 8;
-        FontSizeLegend = 8;
-        sgTitleFontSize = 15;
+            ca = childs(childAxInx);
 
-        type = get( ca, 'type' );
+            FontSizeTitle = 12;
+            FontSizeLabels = 10;
+            FontSizeTicks = 8;
+            FontSizeLegend = 8;
+            sgTitleFontSize = 15;
 
-        if( 1 == strcmp( type, 'axes' ))
-    
-            set(ca,'FontSize',11);
-            h=get(ca,'xlabel');
-    %         set(h, 'FontSize', 11) 
-            set(h,'Interpreter','latex');
-            h=get(ca,'ylabel');
-    %         set(h, 'FontSize', 11) 
-            set(h,'Interpreter','latex');
-            h=get(ca,'zlabel');
-    %         set(h, 'FontSize', 11) 
-            set(h,'Interpreter','latex');
-            
-        %todo Z label
-            continue
+            type = get( ca, 'type' );
+
+            if( 1 == strcmp( type, 'axes' ))
+
+                set(ca,'FontSize',11);
+                h=get(ca,'xlabel');
+                %         set(h, 'FontSize', 11)
+                set(h,'Interpreter','latex');
+                h=get(ca,'ylabel');
+                %         set(h, 'FontSize', 11)
+                set(h,'Interpreter','latex');
+                h=get(ca,'zlabel');
+                %         set(h, 'FontSize', 11)
+                set(h,'Interpreter','latex');
+
+                %todo Z label
+                continue
+            end
+            %         set(ca,...
+            %             'FontName',font,...
+            %             'FontUnits','points',...
+            %             'FontWeight','normal',...
+            %             'FontSize',FontSizeTicks);
+            %         type = get( ca, 'type' );
+
+
+            % set(findobj(gcf,'type','axes'),'FontName','Calibri','FontSize',11, ...
+            % 'FontWeight','Bold', 'LineWidth', 1,'layer','top');grid on
+
+            if( 1 == strcmp( type, 'legend' ))
+                continue;
+            end
+            %
+            %         set(get(ca,'Xlabel'), ...
+            %             'FontUnits','points',...
+            %             'FontWeight','normal',...
+            %             'FontSize',FontSizeLabels,...
+            %             'Interpreter',valInterpreter,...
+            %             'FontName',font);
+            %         set(get(ca,'Ylabel'),...
+            %             'FontUnits','points',...
+            %             'FontWeight','normal',...
+            %             'FontSize',FontSizeLabels,...
+            %             'Interpreter',valInterpreter,...
+            %             'FontName',font);
+            %         set(get(ca,'Title'),...
+            %             'FontUnits','points',...
+            %             'FontWeight','normal',...
+            %             'FontSize',FontSizeTitle,...
+            %             'Interpreter',valInterpreter,...
+            %             'FontName',font);
+            %         set(get(ca,'Legend'),...
+            %             'FontUnits','points',...
+            %             'FontSize',FontSizeLegend,...
+            %             'Interpreter',valInterpreter,...
+            %             'Location','NorthEast',...
+            %             'FontName',font);
         end
-%         set(ca,...
-%             'FontName',font,...
-%             'FontUnits','points',...
-%             'FontWeight','normal',...
-%             'FontSize',FontSizeTicks);
-%         type = get( ca, 'type' );
-
-
-% set(findobj(gcf,'type','axes'),'FontName','Calibri','FontSize',11, ...
-% 'FontWeight','Bold', 'LineWidth', 1,'layer','top');grid on
-
-        if( 1 == strcmp( type, 'legend' )) 
-            continue;
-        end
-% 
-%         set(get(ca,'Xlabel'), ...
-%             'FontUnits','points',...
-%             'FontWeight','normal',...
-%             'FontSize',FontSizeLabels,...
-%             'Interpreter',valInterpreter,...
-%             'FontName',font);
-%         set(get(ca,'Ylabel'),...
-%             'FontUnits','points',...
-%             'FontWeight','normal',...
-%             'FontSize',FontSizeLabels,...
-%             'Interpreter',valInterpreter,...
-%             'FontName',font);
-%         set(get(ca,'Title'),...
-%             'FontUnits','points',...
-%             'FontWeight','normal',...
-%             'FontSize',FontSizeTitle,...
-%             'Interpreter',valInterpreter,...
-%             'FontName',font);
-%         set(get(ca,'Legend'),...
-%             'FontUnits','points',...
-%             'FontSize',FontSizeLegend,...
-%             'Interpreter',valInterpreter,...
-%             'Location','NorthEast',...
-%             'FontName',font);
-    end
-%         
-%         childs = get( gcf, 'Children' );
-%         for(childAxInx = 1:length(childs) )
-%             ca = childs(childAxInx);
-%             type = get( ca, 'type' );
-%             if type ~= "axes"
-%                 continue
-%             end
-%             xlim(ca, valueAxis)
-%             ylim(ca, valueAxis)
-%     %         set(ca, "axes", valueAxis); % not work because field is readOnly
-%         end
+        %
+        %         childs = get( gcf, 'Children' );
+        %         for(childAxInx = 1:length(childs) )
+        %             ca = childs(childAxInx);
+        %             type = get( ca, 'type' );
+        %             if type ~= "axes"
+        %                 continue
+        %             end
+        %             xlim(ca, valueAxis)
+        %             ylim(ca, valueAxis)
+        %     %         set(ca, "axes", valueAxis); % not work because field is readOnly
+        %         end
     end
 end
 
 %%%%%%% PNG HQ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 if (~ismember(argHighQualityPNG, p.UsingDefaults))
-%     figP(folderFilename, ext )% copyOnly
-%     quality
+    %     figP(folderFilename, ext )% copyOnly
+    %     quality
     if (valArgCopy)
         fprintf("\t* %s\n", strcat("Skopiowano do schowka: ", filename));
         copygraphics(gcf)
-    end 
+    end
 
     print( filenameExt, '-dpng', '-r300'); % Zapisz jako tenMPlik_nrOstatniejFigury.png
     fprintf("\t*%s\n", strcat("Zapisano w wysokiej jakości przed procesem skalowania: ", filenameExt));
@@ -463,21 +470,21 @@ if (valExportPdf)
             delete(char(fileNamePDF));
         end
     end
-%     fileNameEPS = strcat(folderFilename, ".eps");
-%     exportgraphics(gcf, fileNameEPS, 'ContentType', 'vector');
+    %     fileNameEPS = strcat(folderFilename, ".eps");
+    %     exportgraphics(gcf, fileNameEPS, 'ContentType', 'vector');
 
     exportgraphics(gcf, fileNamePDF,'ContentType','vector',...
-               'BackgroundColor','none')
+        'BackgroundColor','none')
     fprintf(1,'\t* Zapisano wektorowy PDF:  "%s"\n', fileNamePDF);
-%     mypdf = eps2pdf(fileNameEPS);
+    %     mypdf = eps2pdf(fileNameEPS);
 end
 
 if (~ismember(argNoMargin, p.UsingDefaults))
-%     prev_contents = clipboard('paste');
-%     copygraphics(gcf);
-%     fig_contents = clipboard('paste');
-%     exportgraphics(gcf,"myplot.pdf","Resolution",300)
-%     clipboard('copy', prev_contents);
+    %     prev_contents = clipboard('paste');
+    %     copygraphics(gcf);
+    %     fig_contents = clipboard('paste');
+    %     exportgraphics(gcf,"myplot.pdf","Resolution",300)
+    %     clipboard('copy', prev_contents);
 
     set(gcf,'Units','centimeters')
     %        PosFig = get(gcf,'Position'); FigWidth = PosFig(3);       PosFig = get(gca,'Position');
@@ -486,9 +493,9 @@ if (~ismember(argNoMargin, p.UsingDefaults))
         disp("NoMargin is disabled for multisubplots.")
     end
     for i = 1:length(a)
-    if (length(a) > 1)
-          continue;
-    end
+        if (length(a) > 1)
+            continue;
+        end
         ax = a(i);
         if ax.Type == "subplottext" continue; end;
         if ax.Type == "legend" continue; end;
@@ -522,10 +529,10 @@ if (~ismember(argNoMargin, p.UsingDefaults))
     %         xlabel('Time (s)','Interpreter','latex','FontSize',14)
     %         ylabel('Curvature (cm)','Interpreter','latex','FontSize',14)
     %         legend('$\bar{X}$','$\bar{X} + \sigma$','$\bar{X} - \sigma$','Interpreter','latex','FontSize',14)
-%     saveas(h, strcat(folderFilename, ext));
-%     fprintf(1, ['\t* Zapisano rysunek "%s%s"\n'], folderFilename, ext);
-%                 figP(folderFilename,ext,TNR,valArgCopy);
-%     return
+    %     saveas(h, strcat(folderFilename, ext));
+    %     fprintf(1, ['\t* Zapisano rysunek "%s%s"\n'], folderFilename, ext);
+    %                 figP(folderFilename,ext,TNR,valArgCopy);
+    %     return
 end
 if( FigType==5 ) % 3 as is on monitor
     %        set(gcf,'Units','centimeters')
@@ -546,7 +553,7 @@ if( FigType==6 )
         fprintf("\t* %s\n", strcat("Skopiowano do schowka: ", filename));
         copygraphics(gcf)
     end
-    
+
     figP(folderFilename, ext, TNR, valArgCopy, valOpenFolder, valOpenFile, valExportPdf, valOverwrite)
     return;
 end
@@ -631,7 +638,7 @@ end
 if (valArgCopy)
     fprintf("\t* %s\n", strcat("Skopiowano do schowka: ", filename));
     copygraphics(gcf)
-end 
+end
 
 figP(folderFilename, ext, TNR, valArgCopy, valOpenFolder, valOpenFile, valExportPdf, valOverwrite)
 
