@@ -26,3 +26,6 @@ figPW("exportPdf", 1, "overwrite", 1, "openFolder", 1, "TNR", 0) % disable autom
 <!-- 
 *Install Ghostscript (works only for Win or Linux)*
  -->
+
+ 
+* If you have deleted or permission error, check you have opened file in PDF reader*
