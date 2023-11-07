@@ -194,6 +194,40 @@ if numel(varargin) == 0
     return
 end
 
+%%%%%%% Save copy %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+h=gcf; % for saveas()
+% set(h,'PaperOrientation','Landscape');
+%set(h,'Units','centimeters');
+%set(h,'OuterPosition',[1, 1, 29 21]);
+% set(h,'Position',2*get(h,'Position'));
+
+% fn = nextname(filename, int2str(nrKol), "") to do
+defaultExtension = '.fig';
+if( strcmpi(ext, defaultExtension) == 0 ) % case insensitive
+    if(defaultExtension(1) ~= '.') defaultExtension = strcat('.', defaultExtension); end
+    fileNameExt = strcat(folderFilename, defaultExtension);
+    if(valOverwrite)
+        if(exist(fileNameExt, 'file'))
+            delete(fileNameExt);
+        end
+    end
+    saveas(h, fileNameExt);
+    fprintf(1, '\t* Zapisano kopię: "%s%s"\n', folderFilename, defaultExtension);
+end
+
+%             zapiszFig(nrPliku, nrKol, 'fig');
+%             zapiszFig(nrPliku, nrKol, 'pdf');
+%             zapiszFig(nrPliku, nrKol, 'emf'); %!
+%             zapiszFig(nrPliku, nrKol, 'eps');
+%             zapiszFig(nrPliku, nrKol, 'tif');
+%             zapiszFig(nrPliku, nrKol, 'pcx');
+%             zapiszFig(nrPliku, nrKol, 'jpg');
+%             zapiszFig(nrPliku, nrKol, 'pbm');
+%             zapiszFig(nrPliku, nrKol, 'pgm');
+%             zapiszFig(nrPliku, nrKol, 'png');
+%             zapiszFig(nrPliku, nrKol, 'ppm');
+
 %%%%%%% Font Times New Roman %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 if ( TNR )
@@ -390,39 +424,6 @@ if (~ismember(argHighQualityPNG, p.UsingDefaults))
 end
 
 %%%%%%% Figure Scaling %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-h=gcf; % for saveas()
-% set(h,'PaperOrientation','Landscape');
-%set(h,'Units','centimeters');
-%set(h,'OuterPosition',[1, 1, 29 21]);
-% set(h,'Position',2*get(h,'Position'));
-
-% fn = nextname(filename, int2str(nrKol), "") to do
-defaultExtension = '.fig';
-if( strcmpi(ext, defaultExtension) == 0 ) % case insensitive
-    if(defaultExtension(1) ~= '.') defaultExtension = strcat('.', defaultExtension); end
-    fileNameExt = strcat(folderFilename, defaultExtension);
-    if(valOverwrite)
-        if(exist(fileNameExt, 'file'))
-            delete(fileNameExt);
-        end
-    end
-    saveas(h, fileNameExt);
-    fprintf(1, '\t* Zapisano kopię: "%s%s"\n', folderFilename, defaultExtension);
-end
-
-
-%             zapiszFig(nrPliku, nrKol, 'fig');
-%             zapiszFig(nrPliku, nrKol, 'pdf');
-%             zapiszFig(nrPliku, nrKol, 'emf'); %!
-%             zapiszFig(nrPliku, nrKol, 'eps');
-%             zapiszFig(nrPliku, nrKol, 'tif');
-%             zapiszFig(nrPliku, nrKol, 'pcx');
-%             zapiszFig(nrPliku, nrKol, 'jpg');
-%             zapiszFig(nrPliku, nrKol, 'pbm');
-%             zapiszFig(nrPliku, nrKol, 'pgm');
-%             zapiszFig(nrPliku, nrKol, 'png');
-%             zapiszFig(nrPliku, nrKol, 'ppm');
 
 %     h=gcf;
 %END
