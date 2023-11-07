@@ -21,7 +21,8 @@ urlwrite ('https://raw.githubusercontent.com/informacja/fig/main/eps2pdf.m', 'ep
 ## For saving figures without margin to pdf
 
 ```matlab
-figPW("exportPdf", 1, "overwritePdf", 1, "openFolder", 1, "TNR", 0) % disable automatic Times New Roman font changing
+figPW("exportPdf", 1, "overwrite", 1, "openFolder", 1, "TNR", 0) % disable automatic Times New Roman font changing
 ```
-
+<!-- 
 *Install Ghostscript (works only for Win or Linux)*
+ -->
