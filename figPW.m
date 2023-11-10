@@ -6,11 +6,24 @@ function figPW(varargin)% FigType, ext, katalog)
 % or just (fast version) save to file with timestamp
 %       figPW
 %
-% Function gets pair of arguments. (as "copy" above)
+% Function gets pair of arguments. (as "copy" above), if notspecyfied
+% second argument enable or disable functionality
 %
-% Example param: copy, maxF, noMargin, hqPNG, axis, hLegend, Interpreter,
-% openFolder, argOpenFile, exportPdf, timestamp, overwrite
-%
+% Example param: 
+%   copy - get your figure without margin, into clippboard and past into your document,
+%   maxF - maximize current figure before saveing,
+%   exportPdf - export wector graphics figure to PDF file (main opion of lib),
+%   openFolder - open exported file directory,
+%   argOpenFile - open file in system default program,
+%   overwrite - delete file before exportig, to avoid permission confilct on Windows
+%   timestamp - add date and time to exported filename
+%   hqPNG - export highquality png file, 
+%   axis - add param for axis, eg figPW("axis", "tight"),
+%   hLegend - horizontal legend, (true, or false)
+%   Interpreter - eg. figPW("Interpreter", "latex")
+%   styleLudwin - predefined figure style, to enable (1), (0) to disable
+%   noMargin - depracated, replaced by "copy" or "exportPDF"
+% 
 % Args are compared case insensitive
 %
 % Example: % for PhD students
