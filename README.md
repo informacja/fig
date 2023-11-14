@@ -15,7 +15,7 @@ clc; fprintf(1,'Now you can type here "help figPW".\nIf you want save all opened
 ### Uninstallation
 Open file like below and change first variable as value commented and run this script
 ```matlab
-edit(fullfile(userpath,'startup.m'))
+edit(fullfile(userpath,'startupFigPSW.m'))
 ```
 <!-- urlwrite ('https://raw.githubusercontent.com/informacja/fig/main/figPSW.m', 'figPSW.m');
   urlwrite ('https://raw.githubusercontent.com/informacja/fig/main/figPW.m', 'figPW.m');
