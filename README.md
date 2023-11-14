@@ -7,7 +7,7 @@ Copy and paste this in your MATLAB console, if you want to update use [overwrite
 proj_path = pwd;
 cd(fullfile(userpath));
 urlwrite ('https://raw.githubusercontent.com/informacja/fig/main/startupFigPSW.m', 'startupPSW.m');
-startup;
+startupFigPSW;
 cd(proj_path);
 clc; fprintf(1,'Now you can type here "help figPW".\nIf you want save all opened figures just run "figPSW".\n')
 ```
