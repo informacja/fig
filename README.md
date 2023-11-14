@@ -6,10 +6,16 @@ Copy and paste this in your MATLAB console, if you want to update use [overwrite
 ```matlab
 proj_path = pwd;
 cd(fullfile(userpath));
-urlwrite ('https://raw.githubusercontent.com/informacja/fig/main/startup.m', 'startup.m');
+urlwrite ('https://raw.githubusercontent.com/informacja/fig/main/startupFigPSW.m', 'startupPSW.m');
 startup;
 cd(proj_path);
 clc; fprintf(1,'Now you can type here "help figPW".\nIf you want save all opened figures just run "figPSW".\n')
+```
+
+### Uninstallation
+Open file like below and change first variable as value commented and run this script
+```matlab
+edit(fullfile(userpath,'startup.m'))
 ```
 <!-- urlwrite ('https://raw.githubusercontent.com/informacja/fig/main/figPSW.m', 'figPSW.m');
   urlwrite ('https://raw.githubusercontent.com/informacja/fig/main/figPW.m', 'figPW.m');
