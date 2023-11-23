@@ -1,5 +1,5 @@
 installFigPSW = 1; % 0 to uninstall
-% edit(fullfile(userpath,'startup.m')) % install script version  0.0.1.1
+% edit(fullfile(userpath,'startupFigPSW.m')) % install script version  0.0.1.1
 
 listOfFiles = [
     "https://raw.githubusercontent.com/informacja/fig/main/figPSW.m", "figPSW.m"; 

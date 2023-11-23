@@ -273,6 +273,11 @@ if ( TNR )
             type = get( ca, 'type' );
             continue
         end
+
+        if( 1 == strcmp( type, 'tiledlayout' ))
+            continue
+        end
+
         set(ca,...
             'FontName',font,...
             'FontUnits','points',...
