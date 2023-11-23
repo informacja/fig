@@ -9,7 +9,7 @@ function figPW(varargin)% FigType, ext, katalog)
 % Function gets pair of arguments. (as "copy" above), if notspecyfied
 % second argument enable or disable functionality
 %
-% Example param: 
+% Example param:
 %   copy - get your figure without margin, into clippboard and past into your document,
 %   maxF - maximize current figure before saveing,
 %   exportPdf - export wector graphics figure to PDF file (main opion of lib),
@@ -17,13 +17,13 @@ function figPW(varargin)% FigType, ext, katalog)
 %   argOpenFile - open file in system default program,
 %   overwrite - delete file before exportig, to avoid permission confilct on Windows
 %   timestamp - add date and time to exported filename
-%   hqPNG - export highquality png file, 
+%   hqPNG - export highquality png file,
 %   axis - add param for axis, eg figPW("axis", "tight"),
 %   hLegend - horizontal legend, (true, or false)
 %   Interpreter - eg. figPW("Interpreter", "latex")
 %   styleLudwin - predefined figure style, to enable (1), (0) to disable
 %   noMargin - depracated, replaced by "copy" or "exportPDF"
-% 
+%
 % Args are compared case insensitive
 %
 % Example: % for PhD students
@@ -275,6 +275,41 @@ if ( TNR )
         end
 
         if( 1 == strcmp( type, 'tiledlayout' ))
+            %             continue
+            %         set(ca,...
+            %             'FontName',font,...
+            %             'FontUnits','points',...
+            %             'FontWeight','normal',...
+            %             'FontSize',FontSizeTicks);
+            type = get( ca, 'type' );
+
+            set(get(ca,'XLabel'), ...
+                'FontWeight','normal',...
+                'FontSize',FontSizeLabels,...
+                'Interpreter',valInterpreter,...
+                'FontName',font);
+            set(get(ca,'YLabel'),...
+                'FontWeight','normal',...
+                'FontSize',FontSizeLabels,...
+                'Interpreter',valInterpreter,...
+                'FontName',font);
+            set(get(ca,'Title'),...
+                'FontWeight','normal',...
+                'FontSize',FontSizeTitle,...
+                'Interpreter',valInterpreter,...
+                'FontName',font);
+            set(get(ca,'Subtitle'),...
+                'FontSize',FontSizeLegend,...
+                'Interpreter',valInterpreter,...
+                'FontName',font);
+            if(isfield(ca, "Legend"))
+                set(get(ca,'Legend'),...
+                    'FontUnits','points',...
+                    'FontSize',FontSizeLegend,...
+                    'Interpreter',valInterpreter,...
+                    'Location','NorthEast',...
+                    'FontName',font);
+            end
             continue
         end
 
@@ -386,6 +421,62 @@ if (~ismember(argStyleLudwin, p.UsingDefaults))
             if( 1 == strcmp( type, 'legend' ))
                 continue;
             end
+
+            if( 1 == strcmp( type, 'tiledlayout' ))
+                gcaP = gca().Parent;
+                ch = gcaP.Children;
+                set(ca.Title,...
+                    'FontName',font,...
+                    'FontWeight','normal',...
+                    'FontSize',sgTitleFontSize);
+
+%                 nums = tilenum(flipud(gca))
+                for( i = 1:numel(ch))
+                    a = ch(i);
+                    atype = get( a, 'type' );
+                    if( 1 == strcmp( atype, 'legend' ))
+                        h = a;
+                        set(h,'Interpreter','latex');
+                        set(h,'FontName',font);
+                        set(h,'FontSize',FontSizeLegend);
+                        continue
+                    end
+                    set(a,'FontSize', FontSizeLabels);
+                    h=get(a,'XLabel');
+                    set(h,'Interpreter','latex');
+                    set(h,'FontName',font);
+                    set(h,'FontSize',FontSizeLabels);
+                    
+                    h=get(a,'YLabel');
+                    set(h,'Interpreter','latex');
+                    set(h,'FontName',font);
+                    set(h,'FontSize',FontSizeLabels);
+
+                    h=get(a,'Title');
+                    set(h,'Interpreter','latex');
+                    set(h,'FontSize', FontSizeTitle);
+
+
+% FontSizeTicks = 8;TODO
+          
+%                     h=get(ca,'ZLabel'); isfield
+%                     set(h,'Interpreter','latex');
+%                     set(h,'FontName','Times');
+
+%                     set(a,'YLabel',10);
+%                     set(a,'Title',FontSizeTitle);
+%                     set(a,'Subtitle',20);
+%                      h=get(ca,'xlabel');
+                end
+                
+%                 title("fontname","times")
+%                 title( get(ca,'Title').String, 'interpreter','latex')
+                set(ca.Title,'Interpreter','latex');
+%                 set(gca.Title,'xFontSize',20);
+%                  set(gca,'FontSize',20);
+            end
+
+
             %
             %         set(get(ca,'Xlabel'), ...
             %             'FontUnits','points',...
