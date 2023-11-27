@@ -14,7 +14,8 @@ function figPW(varargin)% FigType, ext, katalog)
 %   maxF - maximize current figure before saveing,
 %   exportPdf - export wector graphics figure to PDF file (main opion of lib),
 %   openFolder - open exported file directory,
-%   argOpenFile - open file in system default program,
+%   argOpenFile - open file in system default program (true or false) ,
+%   tileSpacing - if is posible apply of this: "loose" (default) | "compact" | "tight" | "none"
 %   overwrite - delete file before exportig, to avoid permission confilct on Windows
 %   timestamp - add date and time to exported filename
 %   hqPNG - export highquality png file,
@@ -66,8 +67,8 @@ valInterpreter = 'tex';
 valOpenFolder = false;
 valOpenFile = false;
 valExportPdf = false;
-valOverwrite = false;
 valStyleLudwin = false;
+valOverwrite = false;
 valTimestamp = false;
 % valueAxis = "";
 % valNoMarginPDF = "";
@@ -87,6 +88,7 @@ argExportPdf = "exportPdf";
 argOverwrite = "overwrite";
 argStyleLudwin = "styleLudwin";
 argTimestamp = "timestamp";
+argTileSpacing = "tileSpacing";
 
 % -- Parser ---------------------------------------------------------------
 
@@ -107,7 +109,7 @@ addOptional(p, argStyleLudwin, valStyleLudwin);
 addOptional(p, argTimestamp, valTimestamp);
 
 % without default value
-optParam = [ argCopy, "TZ1", "TZ2", argNoMargin, argMaxF, argHighQualityPNG, argAxis, argHorizontalLegend];
+optParam = [ argCopy, "TZ1", "TZ2", argNoMargin, argMaxF, argHighQualityPNG, argAxis, argHorizontalLegend, argTileSpacing];
 for i = 1:length(optParam)
     addOptional(p,optParam(i),[]);
 end
@@ -132,6 +134,7 @@ valOverwrite = p.Results.overwrite;
 valStyleLudwin  = p.Results.styleLudwin;
 % valMaxF         = p.Results.valMaxF; todo
 valTimestamp = p.Results.timestamp;
+valTileSpacing = p.Results.tileSpacing;
 
 if(nargin<2) ext = 'png'; end;
 % if(nargin<3) katalog = 'figury/'; end;
@@ -388,6 +391,7 @@ if (~ismember(argStyleLudwin, p.UsingDefaults))
             FontSizeTicks = 8;
             FontSizeLegend = 8;
             sgTitleFontSize = 15;
+            font = 'Times';
 
             type = get( ca, 'type' );
 
@@ -517,6 +521,48 @@ if (~ismember(argStyleLudwin, p.UsingDefaults))
         %         end
     end
 end
+
+
+if (~ismember(argTileSpacing, p.UsingDefaults))
+
+        childs = get( gcf, 'Children' );  % old type, simple styled figure
+        for(childAxInx = 1:length(childs) )
+
+            ca = childs(childAxInx);
+
+            type = get( ca, 'type' );
+
+            if( 1 == strcmp( type, 'axes' ))
+                continue
+            end
+
+            if( 1 == strcmp( type, 'legend' ))
+                continue;
+            end
+
+            if( 1 == strcmp( type, 'tiledlayout' ))
+                gcaP = gca().Parent;
+                gcaP.TileSpacing = valTileSpacing;
+%                 ch = gcaP.Children;
+%                 set(ca.Title,...
+%                     'FontName',font,...
+%                     'FontWeight','normal',...
+%                     'FontSize',sgTitleFontSize);
+% 
+% %                 nums = tilenum(flipud(gca))
+%                 for( i = 1:numel(ch))
+%                     a = ch(i);
+%                     atype = get( a, 'type' );
+%                     if( 1 == strcmp( atype, 'legend' ))
+%                         h = a;
+%                         set(h,'Interpreter','latex');
+%                         set(h,'FontName',font);
+%                         set(h,'FontSize',FontSizeLegend);
+%                         continue
+            end
+        end
+end
+
 
 %%%%%%% PNG HQ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
