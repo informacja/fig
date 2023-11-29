@@ -1,5 +1,5 @@
 function figPW(varargin)% FigType, ext, katalog)
-% Part of 3 functions: figP, figPW and figPSW
+% Part of 3 functions: figP, figPW and figPSW for many figures.
 %
 % Usage:
 %       figPW("copy", 1) % Figure will be coped to clipboard
