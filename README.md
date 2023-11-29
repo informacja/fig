@@ -2,7 +2,7 @@
 Simple saving figures library for Matlab. Auto generate saved vector graphic (eg. PDF) filename 
 
 ### Library installation
-Copy and paste this in your MATLAB console, if you want to update use [overwrite](overwrite.md) command
+Copy and paste this in your MATLAB console, if you want to update use [overwrite](overwrite.md) command or [uninstall](uninstall.md)
 ```matlab
 proj_path = pwd;
 cd(fullfile(userpath));
@@ -12,11 +12,6 @@ cd(proj_path);
 clc; fprintf(1,'Now you can type here "help figPW".\nIf you want save all opened figures just run "figPSW".\n')
 ```
 
-### Uninstallation
-Open file like below and change first variable as value commented and run this script
-```matlab
-edit(fullfile(userpath,'startupFigPSW.m'))
-```
 <!-- urlwrite ('https://raw.githubusercontent.com/informacja/fig/main/figPSW.m', 'figPSW.m');
   urlwrite ('https://raw.githubusercontent.com/informacja/fig/main/figPW.m', 'figPW.m');
    urlwrite ('https://raw.githubusercontent.com/informacja/fig/main/figP.m', 'figP.m');
