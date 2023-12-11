@@ -153,6 +153,9 @@ try
         tmp = handle.Children(i);
         if(strcmp(get(tmp, 'type'), 'subplottext') == 1 )
             SGtitle = tmp.String;
+        end  
+        if(strcmp(get(tmp, 'Type'), 'tiledlayout') == 1 )
+            SGtitle = tmp.Title.String;
         end
     end
 catch
@@ -173,7 +176,7 @@ if( isempty(SGtitle) )
     end
 else
     %         tmp = tmp.String;
-    fTitle = strcat(SGtitle, "_");
+    fTitle = strcat(string(SGtitle), "_");
 end
 nrName = get( get(gcf,'Number'), 'Name' );
 if(valTimestamp)
