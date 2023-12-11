@@ -2,28 +2,29 @@ function figPW(varargin)% FigType, ext, katalog)
 % Part of 3 functions: figP, figPW and figPSW for many figures.
 %
 % Usage:
-%       figPW("copy", 1) % Figure will be coped to clipboard
+%       figPW("copy", 1) % Figure will be copied to clipboard
 % or just (fast version) save to file with timestamp
 %       figPW
 %
-% Function gets pair of arguments. (as "copy" above), if notspecyfied
+% Function gets pair of arguments. (as "copy" above), if not specified
 % second argument enable or disable functionality
 %
-% Example param:
-%   copy - get your figure without margin, into clippboard and past into your document,
-%   maxF - maximize current figure before saveing,
-%   exportPdf - export wector graphics figure to PDF file (main opion of lib),
+% Example params (true or false, second pair param):
+%   copy - get your figure without margin, into clipboard and past into your document,
+%   maxF - maximize current figure before saving,
+%   exportPdf - export wector graphics figure to PDF file (main option of lib),
 %   openFolder - open exported file directory,
-%   argOpenFile - open file in system default program (true or false) ,
+%   argOpenFile - open file in system default program  ,
 %   tileSpacing - if is posible apply of this: "loose" (default) | "compact" | "tight" | "none"
 %   overwrite - delete file before exportig, to avoid permission confilct on Windows
 %   timestamp - add date and time to exported filename
-%   hqPNG - export highquality png file,
-%   axis - add param for axis, eg figPW("axis", "tight"),
-%   hLegend - horizontal legend, (true, or false)
+%   hqPNG - export high quality png file,
+%   axis - add param for axis, eg. figPW("axis", "tight"),
+%   hLegend - horizontal legend,
 %   Interpreter - eg. figPW("Interpreter", "latex")
 %   styleLudwin - predefined figure style, to enable (1), (0) to disable
-%   noMargin - depracated, replaced by "copy" or "exportPDF"
+%   noMargin - deprecated, replaced by "copy" or "exportPDF"
+%   TNR - automatic Times New Roman font changing
 %
 % Args are compared case insensitive
 %
@@ -576,9 +577,11 @@ if (~ismember(argHighQualityPNG, p.UsingDefaults))
         fprintf("\t* %s\n", strcat("Skopiowano do schowka: ", filename));
         copygraphics(gcf)
     end
+    
+    filenameExtHQ = strcat(folderFilename, "HQ", ext); % Default filename
 
-    print( filenameExt, '-dpng', '-r300'); % Zapisz jako tenMPlik_nrOstatniejFigury.png
-    fprintf("\t*%s\n", strcat("Zapisano w wysokiej jakości przed procesem skalowania: ", filenameExt));
+    print( filenameExtHQ, '-dpng', '-r300'); % Zapisz jako tenMPlik_nrOstatniejFigury.png
+    fprintf("\t* %s\n", strcat("Zapisano w wysokiej jakości przed procesem skalowania: ", filenameExtHQ));
 end
 
 %%%%%%% Figure Scaling %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -634,7 +637,7 @@ if (valExportPdf)
 
     exportgraphics(gcf, fileNamePDF,'ContentType','vector',...
         'BackgroundColor','none')
-    fprintf(1,'\t* Zapisano wektorowy PDF:  "%s"\n', fileNamePDF);
+    fprintf(1,'\t* Zapisano wektorowy PDF: "%s"\n', fileNamePDF);
     %     mypdf = eps2pdf(fileNameEPS);
 end
 
