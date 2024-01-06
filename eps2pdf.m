@@ -6,7 +6,7 @@ function [result,msg] = eps2pdf(epsFile,fullGsPath,orientation)
 %   - epsFile:      eps file name to be converted to pdf file
 %   - fullGsPath:   (optional) FULL GS path, including the file name, to
 %                   the GS executable (on win32 it could be c:\program
-%                   files\gs\gs8.14\bin\gswin32c.exe). The existence for
+%                   files\gs\gs8.14\bin\gswin32c.exe, or /usr/local/bin/gs on macos). The existence for
 %                   fullGsPath will be checked for if given. On the other
 %                   hand, if fullGsPath is not given or empty it defaults
 %                   to 'gswin32c' for pcs and 'gs' for unix and the
