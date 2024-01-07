@@ -1,11 +1,12 @@
-function figP(filename, ext, TNR, valArgCopy, valOpenFolder, valOpenFile, valExportPdf, valOverwrite)
+function figP(filename, ext, TNR, valArgCopy, valOpenFolder, valOpenFile, valExportPdf, valOverwrite, valSkipSaveAs)
 
-if(nargin<3) TNR = false; end;
-if(nargin<4) valArgCopy = false; end;
-if(nargin<5) valOpenFolder = false; end;
-if(nargin<6) valOpenFile = false; end;
+if(nargin<3) TNR = false; end
+if(nargin<4) valArgCopy = false; end
+if(nargin<5) valOpenFolder = false; end
+if(nargin<6) valOpenFile = false; end
 if(nargin<7) valExportPdf = false; end
 if(nargin<8) valOverwrite = false; end
+if(nargin<9) valSkipSaveAs = false; end
 
 tmp = char(ext);
 if(tmp(1) ~= '.')
@@ -18,9 +19,19 @@ if(valOverwrite)
         delete(fileNameExt);
     end
 end
-saveas(h, fileNameExt);
-fprintf(1, ['\t* Zapisano rastrowy rysunek: "%s%s"\n'], filename, ext);
-
+if(~valSkipSaveAs)
+    if(ext == ".pdf")
+        exportgraphics(gcf, fileNameExt,'ContentType','vector',...
+            'BackgroundColor','none')
+        fprintf(1, ['\t* Zapisano wektorowy rysunek: "%s%s"\n'], filename, ext);
+    elseif(ext == ".tif")
+        exportgraphics(gcf, fileNameExt, 'BackgroundColor','white')
+        fprintf(1, ['\t* Zapisano rysunek: "%s%s"\n'], filename, ext);
+    else
+        saveas(h, fileNameExt);
+        fprintf(1, ['\t* Zapisano rastrowy rysunek: "%s%s"\n'], filename, ext);
+    end
+end
 path = fileNameExt;
 if valExportPdf
     path = strcat(filename, ".pdf");

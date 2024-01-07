@@ -7,7 +7,7 @@ function figPW(varargin)% FigType, ext, katalog)
 %       figPW
 %
 % Function gets pair of arguments. (as "copy" above), if not specified
-% second argument enable or disable functionality
+%   second argument enable or disable functionality
 %
 % Example params (true or false, second pair param):
 %   copy - get your figure without margin, into clipboard and past into your document,
@@ -22,14 +22,29 @@ function figPW(varargin)% FigType, ext, katalog)
 %   axis - add param for axis, eg. figPW("axis", "tight"),
 %   hLegend - horizontal legend,
 %   Interpreter - eg. figPW("Interpreter", "latex")
-%   styleLudwin - predefined figure style, to enable (1), (0) to disable
+%   styleLudwin - predefined figure style, to enable (1) | (0) to disable
 %   noMargin - deprecated, replaced by "copy" or "exportPDF"
 %   TNR - automatic Times New Roman font changing
-%
+%   saveCopyFig - defalut = true (backup file)
+%   argSkipSaveAs - doesn't save default file, default = false
+%   nrF - just select figure you want to save
+%   vectorReplacedByTIFFigBytes - size of figure, default = 50 000, 
+%       only for export fig argument
+%   scale - set the scalar, default = 1
+% 
+%  Example optioal params with value
+%   path - specyfy output file prefix of folder (with slash at end) path
+%   ext - extension for files
+% 
 % Args are compared case insensitive
 %
-% Example: % for PhD students
+% Example 1: % for PhD students
 %       figPW("exportPdf", 1, "openFolder", 1, "TNR", 0, "styleLudwin", 1, "overwrite", 1)
+% 
+% Example 2: 
+%       figPW("path", exportPath, "exportPDF", 1,"openFolder",1,"saveCopyFig", ...
+%              backup,"skipSaveAs",1, "scale", mnoznik);
+
 
 % schowek do pdfa no margin
 % size legend
@@ -71,6 +86,11 @@ valExportPdf = false;
 valStyleLudwin = false;
 valOverwrite = false;
 valTimestamp = false;
+valSaveCopyFig = true;
+valSkipSaveAs = false;
+valNrF = 1;
+valVectorReplacedByTIFFigBytes = 5e4;
+valScale = 1; 
 % valueAxis = "";
 % valNoMarginPDF = "";
 
@@ -90,6 +110,11 @@ argOverwrite = "overwrite";
 argStyleLudwin = "styleLudwin";
 argTimestamp = "timestamp";
 argTileSpacing = "tileSpacing";
+argSaveCopyFig = "saveCopyFig";
+argSkipSaveAs = "skipSaveAs";
+argNrF = "nrF";
+argVectorReplacedByTIFFigBytes = "vectorReplacedByTIFFigBytes";
+argScale = "scale";
 
 % -- Parser ---------------------------------------------------------------
 
@@ -99,7 +124,7 @@ p.FunctionName = mfilename('name');
 % with default values
 
 addOptional(p, 'ext',   valDefaultExt);
-addOptional(p, 'folder',valSaveTo);
+addOptional(p, 'path',  valSaveTo);
 addOptional(p, 'TNR',   valNoTNR);
 addOptional(p, argInterpreter, valInterpreter);
 addOptional(p, argOpenFolder, valOpenFolder);
@@ -108,9 +133,14 @@ addOptional(p, argExportPdf, valExportPdf);
 addOptional(p, argOverwrite, valOverwrite);
 addOptional(p, argStyleLudwin, valStyleLudwin);
 addOptional(p, argTimestamp, valTimestamp);
+addOptional(p, argSaveCopyFig, valSaveCopyFig);
+addOptional(p, argSkipSaveAs, valSkipSaveAs);
+addOptional(p, argVectorReplacedByTIFFigBytes, valVectorReplacedByTIFFigBytes);
 
 % without default value
-optParam = [ argCopy, "TZ1", "TZ2", argNoMargin, argMaxF, argHighQualityPNG, argAxis, argHorizontalLegend, argTileSpacing];
+optParam = [ argCopy, "TZ1", "TZ2", argNoMargin, argMaxF, argHighQualityPNG, ...
+    argAxis, argHorizontalLegend, argTileSpacing, argNrF, argScale ];
+
 for i = 1:length(optParam)
     addOptional(p,optParam(i),[]);
 end
@@ -122,7 +152,7 @@ parse(p,varargin{:});
 ext = p.Results.ext;
 tmp = char(ext);
 if(tmp(1) ~= '.') ext = strcat('.', ext); end
-katalog = p.Results.folder;
+katalog = p.Results.path;
 if isstring(p.Results.TNR) TNR = str2num( p.Results.TNR ); else TNR = p.Results.TNR; end
 if isstring(p.Results.copy ) valArgCopy = str2num( p.Results.copy ); else valArgCopy = p.Results.copy; end
 valueAxis       = p.Results.axis;
@@ -136,6 +166,15 @@ valStyleLudwin  = p.Results.styleLudwin;
 % valMaxF         = p.Results.valMaxF; todo
 valTimestamp = p.Results.timestamp;
 valTileSpacing = p.Results.tileSpacing;
+valSaveCopyFig = p.Results.saveCopyFig;
+valSkipSaveAs = p.Results.skipSaveAs;
+valNrF = p.Results.nrF;
+valVectorReplacedByTIFFigBytes = p.Results.vectorReplacedByTIFFigBytes;
+valScale = p.Results.scale;
+
+if(~isempty(valNrF))
+    figure(valNrF)
+end
 
 if(nargin<2) ext = 'png'; end;
 % if(nargin<3) katalog = 'figury/'; end;
@@ -154,7 +193,7 @@ try
         tmp = handle.Children(i);
         if(strcmp(get(tmp, 'type'), 'subplottext') == 1 )
             SGtitle = tmp.String;
-        end  
+        end
         if(strcmp(get(tmp, 'Type'), 'tiledlayout') == 1 )
             SGtitle = tmp.Title.String;
         end
@@ -210,7 +249,7 @@ end
 %%%%%%% Fast save %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 if numel(varargin) == 0
-    figP(folderFilename, ext, TNR, valArgCopy, valOpenFolder, valOpenFile, valExportPdf, valOverwrite)
+    figP(folderFilename, ext, TNR, valArgCopy, valOpenFolder, valOpenFile, valExportPdf, valOverwrite, valSkipSaveAs)
     return
 end
 
@@ -224,16 +263,19 @@ h=gcf; % for saveas()
 
 % fn = nextname(filename, int2str(nrKol), "") to do
 defaultExtension = '.fig';
-if( strcmpi(ext, defaultExtension) == 0 ) % case insensitive
-    if(defaultExtension(1) ~= '.') defaultExtension = strcat('.', defaultExtension); end
-    fileNameExt = strcat(folderFilename, defaultExtension);
-    if(valOverwrite)
-        if(exist(fileNameExt, 'file'))
-            delete(fileNameExt);
+if(valSaveCopyFig)
+    if( strcmpi(ext, defaultExtension) == 0 ) % case insensitive
+        if(defaultExtension(1) ~= '.') defaultExtension = strcat('.', defaultExtension); end
+        fileNameExt = strcat(folderFilename, defaultExtension);
+        if(valOverwrite)
+            if(exist(fileNameExt, 'file'))
+                delete(fileNameExt);
+            end
         end
+        saveas(h, fileNameExt);
+        
+        fprintf(1, '\t* Zapisano kopię: "%s%s"\n', folderFilename, defaultExtension);
     end
-    saveas(h, fileNameExt);
-    fprintf(1, '\t* Zapisano kopię: "%s%s"\n', folderFilename, defaultExtension);
 end
 
 %             zapiszFig(nrPliku, nrKol, 'fig');
@@ -567,6 +609,14 @@ if (~ismember(argTileSpacing, p.UsingDefaults))
         end
 end
 
+%%%%%%% Scale %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+if(valScale ~= 1)
+    PosFig = get(gcf,'Position');
+    PosFig(3:4) = PosFig(3:4)*valScale;
+    set(gcf, 'Position',PosFig );
+end
 
 %%%%%%% PNG HQ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -626,6 +676,11 @@ if( FigType==3 ) % 3 as is on monitor
 end
 
 if (valExportPdf)
+    %% ---------------- Check matlab version ----------------------------------
+    if verLessThan('matlab', '9.8')
+        error(' - figPW.m: Older versions than Matlab 2020b are not supported for exportgraphics')
+    end
+
     fileNamePDF = strcat(folderFilename, ".pdf");
     if(valOverwrite)
         if exist(fileNamePDF,'file')
@@ -635,9 +690,45 @@ if (valExportPdf)
     %     fileNameEPS = strcat(folderFilename, ".eps");
     %     exportgraphics(gcf, fileNameEPS, 'ContentType', 'vector');
 
-    exportgraphics(gcf, fileNamePDF,'ContentType','vector',...
-        'BackgroundColor','none')
+    % sum = GetSize(gcf().CurrentObject);
+    % for(i = 1:length(gcf().Children))
+    % 
+    %     a = GetSize(gcf().Children(i));
+    %     sum = sum + a;
+    % end
+    % fprintf(1, 'Fig nr %d = %d bytes\n', gcf().Number, sum); 
+
+    % if(sum > valVectorReplacedByTIFFigBytes)
+    %     n = strcat(folderFilename, ".tif");
+    %     exportgraphics(gcf, n, 'BackgroundColor','white','Resolution',300)    
+    %     fprintf(1,'\t* Zapisano zamiast PDF obraz TIFF: "%s"\n', n);
+    %     return
+    % end
+    
+    lastwarn('')
+    exportgraphics(gcf, fileNamePDF, 'BackgroundColor','none', 'ContentType', 'vector')
     fprintf(1,'\t* Zapisano wektorowy PDF: "%s"\n', fileNamePDF);
+    [msgstr, msgid] = lastwarn;
+    switch msgid %identifier
+        case 'MATLAB:print:ContentTypeImageSuggested'
+            n = strcat(folderFilename, ".tif");
+            exportgraphics(gcf, n, 'BackgroundColor','white','Resolution',300)    
+            fprintf(1,'\t* Zapisano optymalny TIFF: "%s"\n', n);
+        otherwise             
+    end
+
+    % 
+    % exportgraphics(gcf, fileNamePDF,...
+    %     'BackgroundColor','none', ...
+    %     'ContentType', 'vector')
+    % fprintf(1,'\t* Zapisano wektorowy PDF: "%s"\n', fileNamePDF);
+    
+%     fid = fopen('myfile.dat');
+% fseek(fid, 0, 'eof');
+% filesize = ftell(fid)
+% fclose(fid);
+% GetSize(gcf)
+
     %     mypdf = eps2pdf(fileNameEPS);
 end
 
@@ -705,7 +796,7 @@ if( FigType==5 ) % 3 as is on monitor
     H = figure(gcf);
     a = get(H,'Position');
     H.WindowState = 'maximized';
-    figP(folderFilename,ext, TNR, valArgCopy, valOpenFolder, valOpenFile, valExportPdf, valOverwrite);
+    figP(folderFilename,ext, TNR, valArgCopy, valOpenFolder, valOpenFile, valExportPdf, valOverwrite, valSkipSaveAs);
     set(H,'Position',a);
     return
 end
@@ -716,7 +807,7 @@ if( FigType==6 )
         copygraphics(gcf)
     end
 
-    figP(folderFilename, ext, TNR, valArgCopy, valOpenFolder, valOpenFile, valExportPdf, valOverwrite)
+    figP(folderFilename, ext, TNR, valArgCopy, valOpenFolder, valOpenFile, valExportPdf, valOverwrite, valSkipSaveAs)
     return;
 end
 %     figure('Units','centimeters',...
@@ -802,11 +893,21 @@ if (valArgCopy)
     copygraphics(gcf)
 end
 
-figP(folderFilename, ext, TNR, valArgCopy, valOpenFolder, valOpenFile, valExportPdf, valOverwrite)
+figP(folderFilename, ext, TNR, valArgCopy, valOpenFolder, valOpenFile, valExportPdf, valOverwrite, valSkipSaveAs)
 
 end
 % set(gcf,'Resize','off')
 
+function [totSize] = GetSize(this) 
+   props = properties(this); 
+   totSize = 0; 
+   
+   for ii=1:length(props) 
+      currentProperty = getfield(this, char(props(ii))); 
+      s = whos('currentProperty'); 
+      totSize = totSize + s.bytes; 
+   end
+end
 
 function [name,val] = nextname(bnm,sfx,ext,otp) %#ok<*ISMAT>
 % Return the next unused filename, incrementing a numbered suffix if required.
