@@ -14,7 +14,7 @@ function figPW(varargin)% FigType, ext, katalog)
 %   maxF - maximize current figure before saving,
 %   exportPdf - export wector graphics figure to PDF file (main option of lib),
 %   openFolder - open exported file directory,
-%   argOpenFile - open file in system default program  ,
+%   argOpenFile - open file in system default program,
 %   tileSpacing - if is posible apply of this: "loose" (default) | "compact" | "tight" | "none"
 %   overwrite - delete file before exportig, to avoid permission confilct on Windows
 %   timestamp - add date and time to exported filename
@@ -23,6 +23,7 @@ function figPW(varargin)% FigType, ext, katalog)
 %   hLegend - horizontal legend,
 %   Interpreter - eg. figPW("Interpreter", "latex")
 %   styleLudwin - predefined figure style, to enable (1) | (0) to disable
+%   stylePiotr - predefined figure style, to enable (1) | (0) to disable
 %   noMargin - deprecated, replaced by "copy" or "exportPDF"
 %   TNR - automatic Times New Roman font changing
 %   saveCopyFig - defalut = true (backup file)
@@ -84,6 +85,7 @@ valOpenFolder = false;
 valOpenFile = false;
 valExportPdf = false;
 valStyleLudwin = false;
+valStylePiotr = false;
 valOverwrite = false;
 valTimestamp = false;
 valSaveCopyFig = true;
@@ -108,6 +110,7 @@ argOpenFile = "openFile";
 argExportPdf = "exportPdf";
 argOverwrite = "overwrite";
 argStyleLudwin = "styleLudwin";
+argStylePiotr = "stylePiotr";
 argTimestamp = "timestamp";
 argTileSpacing = "tileSpacing";
 argSaveCopyFig = "saveCopyFig";
@@ -132,6 +135,7 @@ addOptional(p, argOpenFile, valOpenFile);
 addOptional(p, argExportPdf, valExportPdf);
 addOptional(p, argOverwrite, valOverwrite);
 addOptional(p, argStyleLudwin, valStyleLudwin);
+addOptional(p, argStylePiotr, valStylePiotr);
 addOptional(p, argTimestamp, valTimestamp);
 addOptional(p, argSaveCopyFig, valSaveCopyFig);
 addOptional(p, argSkipSaveAs, valSkipSaveAs);
@@ -163,6 +167,7 @@ valOpenFile     = p.Results.openFile;
 valExportPdf    = p.Results.exportPdf;
 valOverwrite = p.Results.overwrite;
 valStyleLudwin  = p.Results.styleLudwin;
+valStylePiotr = p.Results.stylePiotr;
 % valMaxF         = p.Results.valMaxF; todo
 valTimestamp = p.Results.timestamp;
 valTileSpacing = p.Results.tileSpacing;
@@ -422,8 +427,8 @@ end
 if (~ismember(argStyleLudwin, p.UsingDefaults))
     if (valStyleLudwin)
 
-        arrayfun(@(x) grid(x,'on'), findobj(gcf,'Type','axes'))
-        arrayfun(@(x) grid(x,'minor'), findobj(gcf,'Type','axes'))
+        % arrayfun(@(x) grid(x,'on'), findobj(gcf,'Type','axes'))
+        % arrayfun(@(x) grid(x,'minor'), findobj(gcf,'Type','axes'))
 
         %         grid minor
 
@@ -568,6 +573,186 @@ if (~ismember(argStyleLudwin, p.UsingDefaults))
     end
 end
 
+%-----------
+
+if (~ismember(argStylePiotr, p.UsingDefaults))
+    if (valStylePiotr)
+
+        childs = get( gcf, 'Children' );
+         
+        for(childAxInx = 1:length(childs) ) % for old type plots
+
+            ca = childs(childAxInx);
+
+            FontSizeTitle = 12;
+            FontSizeLabels = 10;
+            FontSizeTicks = 8;
+            FontSizeLegend = 8;
+            sgTitleFontSize = 15;
+            font = 'Times';
+
+            type = get( ca, 'type' );
+            
+            if( 1 == strcmp( type, 'axes' ))
+
+                set(ca,'FontSize',11);
+                set(ca,'Box','on');
+                h=get(ca,'xlabel');
+                h.String = literateLATEX(h.String); % make polish letters for latex
+                %         set(h, 'FontSize', 11)
+                set(h,'Interpreter','latex');
+                h=get(ca,'xaxis');               
+                h.TickLabelInterpreter = 'latex';
+                
+                
+                h=get(ca,'ylabel'); 
+                h.String = literateLATEX(h.String); 
+                %         set(h, 'FontSize', 11)
+                set(h,'Interpreter','latex');
+                h=get(ca,'yaxis');               
+                h.TickLabelInterpreter = 'latex';
+                
+                h=get(ca,'zlabel');
+                h.String = literateLATEX(h.String); 
+                %         set(h, 'FontSize', 11)
+                set(h,'Interpreter','latex');
+                h=get(ca,'zaxis');               
+                h.TickLabelInterpreter = 'latex';
+                
+              
+                h=get(ca,'title');
+                h.String = literateLATEX(h.String); 
+                set(h,'Interpreter','latex');
+                h=get(ca,'subtitle');
+                h.String = literateLATEX(h.String); 
+                set(h,'Interpreter','latex');
+
+                continue
+            end
+
+            if( 1 == strcmp( type, 'subplottext' ))
+                h = ca;
+                h.String = literateLATEX(h.String); 
+                set(h,'Interpreter','latex');
+                continue
+            end
+            %         set(ca,...
+            %             'FontName',font,...
+            %             'FontUnits','points',...
+            %             'FontWeight','normal',...
+            %             'FontSize',FontSizeTicks);
+            %         type = get( ca, 'type' );
+
+
+            % set(findobj(gcf,'type','axes'),'FontName','Calibri','FontSize',11, ...
+            % 'FontWeight','Bold', 'LineWidth', 1,'layer','top');grid on
+
+            if( 1 == strcmp( type, 'legend' ))
+                continue;
+            end
+
+            if( 1 == strcmp( type, 'tiledlayout' ))
+                gcaP = gca().Parent;
+                ch = gcaP.Children;
+                set(ca.Title,...
+                    'FontName',font,...
+                    'FontWeight','normal',...
+                    'FontSize',sgTitleFontSize);
+
+%                 nums = tilenum(flipud(gca))
+                for( i = 1:numel(ch))
+                    a = ch(i);
+                    atype = get( a, 'type' );
+                    if( 1 == strcmp( atype, 'legend' ))
+                        h = a;
+                        h.String = literateLATEX(h.String); 
+                        set(h,'Interpreter','latex');
+                        set(h,'FontName',font);
+                        set(h,'FontSize',FontSizeLegend);
+                        continue
+                    end
+                    set(a,'FontSize', FontSizeLabels);
+                    h=get(a,'XLabel');
+                    h.String = literateLATEX(h.String); 
+                    set(h,'Interpreter','latex');
+                    set(h,'FontName',font);
+                    set(h,'FontSize',FontSizeLabels);
+                    
+                    h=get(a,'YLabel');
+                    h.String = literateLATEX(h.String); 
+                    set(h,'Interpreter','latex');
+                    set(h,'FontName',font);
+                    set(h,'FontSize',FontSizeLabels);
+
+                    h=get(a,'Title');
+                    h.String = literateLATEX(h.String); 
+                    set(h,'Interpreter','latex');
+                    set(h,'FontSize', FontSizeTitle);
+
+
+% FontSizeTicks = 8;TODO
+          
+%                     h=get(ca,'ZLabel'); isfield
+%                     set(h,'Interpreter','latex');
+%                     set(h,'FontName','Times');
+
+%                     set(a,'YLabel',10);
+%                     set(a,'Title',FontSizeTitle);
+%                     set(a,'Subtitle',20);
+%                      h=get(ca,'xlabel');
+                end
+                
+%                 title("fontname","times")
+%                 title( get(ca,'Title').String, 'interpreter','latex')
+                set(ca.Title,'Interpreter','latex'); %?? 
+%                 set(gca.Title,'xFontSize',20);
+%                  set(gca,'FontSize',20);
+            end
+
+
+            %
+            %         set(get(ca,'Xlabel'), ...
+            %             'FontUnits','points',...
+            %             'FontWeight','normal',...
+            %             'FontSize',FontSizeLabels,...
+            %             'Interpreter',valInterpreter,...
+            %             'FontName',font);
+            %         set(get(ca,'Ylabel'),...
+            %             'FontUnits','points',...
+            %             'FontWeight','normal',...
+            %             'FontSize',FontSizeLabels,...
+            %             'Interpreter',valInterpreter,...
+            %             'FontName',font);
+            %         set(get(ca,'Title'),...
+            %             'FontUnits','points',...
+            %             'FontWeight','normal',...
+            %             'FontSize',FontSizeTitle,...
+            %             'Interpreter',valInterpreter,...
+            %             'FontName',font);
+            %         set(get(ca,'Legend'),...
+            %             'FontUnits','points',...
+            %             'FontSize',FontSizeLegend,...
+            %             'Interpreter',valInterpreter,...
+            %             'Location','NorthEast',...
+            %             'FontName',font);
+        end
+        %
+        %         childs = get( gcf, 'Children' );
+        %         for(childAxInx = 1:length(childs) )
+        %             ca = childs(childAxInx);
+        %             type = get( ca, 'type' );
+        %             if type ~= "axes"
+        %                 continue
+        %             end
+        %             xlim(ca, valueAxis)
+        %             ylim(ca, valueAxis)
+        %     %         set(ca, "axes", valueAxis); % not work because field is readOnly
+        %         end
+    end
+end
+
+
+%-----------
 
 if (~ismember(argTileSpacing, p.UsingDefaults))
 
@@ -705,7 +890,7 @@ if (valExportPdf)
     %     return
     % end
     
-    lastwarn('')
+    lastwarn('') % catch
     exportgraphics(gcf, fileNamePDF, 'BackgroundColor','none', 'ContentType', 'vector')
     fprintf(1,'\t* Zapisano wektorowy PDF: "%s"\n', fileNamePDF);
     [msgstr, msgid] = lastwarn;
@@ -896,6 +1081,69 @@ end
 figP(folderFilename, ext, TNR, valArgCopy, valOpenFolder, valOpenFile, valExportPdf, valOverwrite, valSkipSaveAs)
 
 end
+
+% ==========================
+
+function [str] = literateLATEX(str)% ylabel('\''Srednia warto\''s\''c parametru $f_{max}$','Interpreter','latex')
+    % return;
+% I don't know how to do polish letters with lower 'ogonek' in latex, so...
+    str = strrep(str,'ą','{a}');
+    str = strrep(str,'Ą',"{A}");
+    str = strrep(str,'ę','{e}');
+    str = strrep(str,'Ę','{E}');
+
+    % str = strrep(str,'ą','\\k{a}');
+    % str = strrep(str,'Ą','\\k{A}');
+    % str = strrep(str,'ę','\\c{e}');
+    % str = strrep(str,'Ę','\\kE');
+    
+    str = strrep(str,'ó','{\''o}');
+    str = strrep(str,'Ó','{\''O}');
+    str = strrep(str,'ś','{\''s}');
+    str = strrep(str,'Ś','{\''S}');
+    str = strrep(str,'ł','{\l}');
+    str = strrep(str,'Ł','{\L}');
+    str = strrep(str,'ż','{\.z}');
+    str = strrep(str,'Ż','{\.Z}');
+    str = strrep(str,'ź','{\''z}');
+    str = strrep(str,'Ź','{\''Z}');
+    str = strrep(str,'ć','{\''c}');
+    str = strrep(str,'Ć','{\''C}');
+    str = strrep(str,'ń','{\''n}');
+    str = strrep(str,'Ń','{\''N}');
+
+    str = makeExprBtwDollars(str,"_");
+    str = makeExprBtwDollars(str,"^");
+end
+
+function [str] = makeExprBtwDollars(str,sign)
+
+    pat = letterBoundary + lettersPattern;
+    expressi = "\s.[a-z()]*";
+    if(sign=="^")   expression = strcat(expressi,"\",sign);
+    else            expression = strcat(expressi,sign); end
+    begL = regexpPattern(expression);
+    endL = lookBehindBoundary(sign) + optionalPattern(lettersPattern)+ optionalPattern(digitsPattern);
+    e = strfind(str,endL);
+    b = strfind(str,begL);
+    a = char(str);
+    % a(b(2):e)
+    s = size(a);
+    if(length(s)==3) 
+        for(i = 1:s(3)) % for legend text
+            if (~isempty(b{i}) && ~isempty(e{i}))
+                str = insertAfter(str(i), b, "$");
+                str = insertAfter(str(i), e+1, "$");
+            end
+        end
+    else
+        if (~isempty(b) && ~isempty(e))
+            str = insertAfter(str, b, "$");
+            str = insertAfter(str, e+1, "$");
+        end
+    end
+end
+
 % set(gcf,'Resize','off')
 
 function [totSize] = GetSize(this) 
@@ -908,6 +1156,10 @@ function [totSize] = GetSize(this)
       totSize = totSize + s.bytes; 
    end
 end
+
+
+
+
 
 function [name,val] = nextname(bnm,sfx,ext,otp) %#ok<*ISMAT>
 % Return the next unused filename, incrementing a numbered suffix if required.
