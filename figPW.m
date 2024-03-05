@@ -93,6 +93,8 @@ valSkipSaveAs = false;
 valNrF = 1;
 valVectorReplacedByTIFFigBytes = 5e4;
 valScale = 1; 
+valScaleX = 1; 
+valScaleY = 1; 
 % valueAxis = "";
 % valNoMarginPDF = "";
 
@@ -118,6 +120,8 @@ argSkipSaveAs = "skipSaveAs";
 argNrF = "nrF";
 argVectorReplacedByTIFFigBytes = "vectorReplacedByTIFFigBytes";
 argScale = "scale";
+argScaleX = "scaleX";
+argScaleY = "scaleY";
 
 % -- Parser ---------------------------------------------------------------
 
@@ -143,7 +147,7 @@ addOptional(p, argVectorReplacedByTIFFigBytes, valVectorReplacedByTIFFigBytes);
 
 % without default value
 optParam = [ argCopy, "TZ1", "TZ2", argNoMargin, argMaxF, argHighQualityPNG, ...
-    argAxis, argHorizontalLegend, argTileSpacing, argNrF, argScale ];
+    argAxis, argHorizontalLegend, argTileSpacing, argNrF, argScale, argScaleX, argScaleY ];
 
 for i = 1:length(optParam)
     addOptional(p,optParam(i),[]);
@@ -176,6 +180,8 @@ valSkipSaveAs = p.Results.skipSaveAs;
 valNrF = p.Results.nrF;
 valVectorReplacedByTIFFigBytes = p.Results.vectorReplacedByTIFFigBytes;
 valScale = p.Results.scale;
+valScaleX = p.Results.scaleX;
+valScaleY = p.Results.scaleY;
 
 if(~isempty(valNrF))
     figure(valNrF)
@@ -595,7 +601,7 @@ if (~ismember(argStylePiotr, p.UsingDefaults))
             
             if( 1 == strcmp( type, 'axes' ))
 
-                set(ca,'FontSize',11);
+                set(ca,'FontSize',11); % fig in fig case
                 set(ca,'Box','on');
                 h=get(ca,'xlabel');
                 h.String = literateLATEX(h.String); % make polish letters for latex
@@ -619,7 +625,6 @@ if (~ismember(argStylePiotr, p.UsingDefaults))
                 h=get(ca,'zaxis');               
                 h.TickLabelInterpreter = 'latex';
                 
-              
                 h=get(ca,'title');
                 h.String = literateLATEX(h.String); 
                 set(h,'Interpreter','latex');
@@ -671,7 +676,7 @@ if (~ismember(argStylePiotr, p.UsingDefaults))
                         set(h,'FontSize',FontSizeLegend);
                         continue
                     end
-                    set(a,'FontSize', FontSizeLabels);
+                    % set(a,'FontSize', FontSizeLabels);
                     h=get(a,'XLabel');
                     h.String = literateLATEX(h.String); 
                     set(h,'Interpreter','latex');
@@ -800,7 +805,19 @@ end
 if(valScale ~= 1)
     PosFig = get(gcf,'Position');
     PosFig(3:4) = PosFig(3:4)*valScale;
-    set(gcf, 'Position',PosFig );
+    set(gcf, 'Position',PosFig);
+end
+
+if(valScaleX ~= 1)
+    PosFig = get(gcf,'Position');
+    PosFig(3) = PosFig(3)*valScaleX;
+    set(gcf, 'Position', PosFig);
+end
+
+if(valScaleY ~= 1)
+    PosFig = get(gcf,'Position');
+    PosFig(4) = PosFig(4)*valScaleY;
+    set(gcf, 'Position', PosFig);
 end
 
 %%%%%%% PNG HQ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -814,7 +831,9 @@ if (~ismember(argHighQualityPNG, p.UsingDefaults))
     end
     
     filenameExtHQ = strcat(folderFilename, "HQ", ext); % Default filename
-
+    % fid = fopen(filenameExtHQ, 'w')
+    % pause
+    % fclose(fid);
     print( filenameExtHQ, '-dpng', '-r300'); % Zapisz jako tenMPlik_nrOstatniejFigury.png
     fprintf("\t* %s\n", strcat("Zapisano w wysokiej jakości przed procesem skalowania: ", filenameExtHQ));
 end
@@ -1087,15 +1106,15 @@ end
 function [str] = literateLATEX(str)% ylabel('\''Srednia warto\''s\''c parametru $f_{max}$','Interpreter','latex')
     % return;
 % I don't know how to do polish letters with lower 'ogonek' in latex, so...
-    str = strrep(str,'ą','{a}');
-    str = strrep(str,'Ą',"{A}");
-    str = strrep(str,'ę','{e}');
-    str = strrep(str,'Ę','{E}');
-
-    % str = strrep(str,'ą','\\k{a}');
-    % str = strrep(str,'Ą','\\k{A}');
-    % str = strrep(str,'ę','\\c{e}');
-    % str = strrep(str,'Ę','\\kE');
+    % str = strrep(str,'ą','{a}');
+    % str = strrep(str,'Ą',"{A}");
+    % str = strrep(str,'ę','{e}');
+    % str = strrep(str,'Ę','{E}');
+% PSW use diffrent 'ogonek' ;)
+    str = strrep(str,'ą','\c{a}');
+    str = strrep(str,'Ą','\c{A}');
+    str = strrep(str,'ę','\c{e}');
+    str = strrep(str,'Ę','\c{E}');
     
     str = strrep(str,'ó','{\''o}');
     str = strrep(str,'Ó','{\''O}');
@@ -1130,7 +1149,7 @@ function [str] = makeExprBtwDollars(str,sign)
     % a(b(2):e)
     s = size(a);
     if(length(s)==3) 
-        for(i = 1:s(3)) % for legend text
+        for(i = 1:s(3)) % eg. for legend text
             if (~isempty(b{i}) && ~isempty(e{i}))
                 str = insertAfter(str(i), b, "$");
                 str = insertAfter(str(i), e+1, "$");
@@ -1138,8 +1157,9 @@ function [str] = makeExprBtwDollars(str,sign)
         end
     else
         if (~isempty(b) && ~isempty(e))
-            str = insertAfter(str, b, "$");
-            str = insertAfter(str, e+1, "$");
+            % todo
+            % str = insertAfter(str, b, "$");
+            % str = insertAfter(str, e+1, "$");
         end
     end
 end
