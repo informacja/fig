@@ -81,12 +81,9 @@ function [browser] = inBrowserRuned()
         startIndex = regexp(result,"\nOperating System:");
         stopIndex = regexp(result,"\nJava Version:");
         line = result(startIndex:stopIndex);
-        % strfind
-        % if()
         os = "Ubuntu";
         i = strfind(line, os);
         if(i>0)
-            disp("jest");
             browser = false;
         end
     end    
