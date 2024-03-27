@@ -45,7 +45,7 @@ end
 
 % noBrowserOrPhoneRunning = checkSystem();
 
-if(1)
+if(~inBrowserRuned())
     if valOpenFolder
         if ismac
             [status, results] = system((strcat('open -R "', string(path), '"')));
@@ -72,19 +72,24 @@ end
 
 return
 
-
-function [os] = OS()
-    result = evalc('ver');
-    startIndex = regexp(result,"\nOperating System:");
-    stopIndex = regexp(result,"\nJava Version:");
-    line = result(startIndex:stopIndex);
-    % strfind
-    % if()
-    os = "ubuntu";
-    i = strfind(line, os);
-    if(i>0)
-        disp("jest");
-    end
+function [browser] = inBrowserRuned()
+    browser = false;
+    if(ismac) return; end
+    if(isunix())
+        browser = true;
+        result = evalc('ver');
+        startIndex = regexp(result,"\nOperating System:");
+        stopIndex = regexp(result,"\nJava Version:");
+        line = result(startIndex:stopIndex);
+        % strfind
+        % if()
+        os = "ubuntu";
+        i = strfind(line, os);
+        if(i>0)
+            disp("jest");
+            browser = false;
+        end
+    end    
 end
 
 
