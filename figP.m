@@ -57,7 +57,7 @@ if(~inBrowserRuned())
             dos(command);
             else
                 if(isunix)
-                    x=strcat("xdg-open ",pwd,"/",fileparts(path))
+                    x=strcat("xdg-open ",pwd,"/",fileparts(path));
                     system(x);    
                 else
                     warning("Unknown Operating System. Open folder param skiped")
