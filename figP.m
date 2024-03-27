@@ -83,7 +83,7 @@ function [browser] = inBrowserRuned()
         line = result(startIndex:stopIndex);
         % strfind
         % if()
-        os = "ubuntu";
+        os = "Ubuntu";
         i = strfind(line, os);
         if(i>0)
             disp("jest");

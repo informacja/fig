@@ -108,16 +108,17 @@ end
 %UNIX / LINUX : untested
 %This I can't test, because I don't have unix :\
 if isunix
-    warning('the author doesn''t have unix - I''d love to hear from you if this works');
+    % warning('the author doesn''t have unix - I''d love to hear from you if this works');
     
     %the below ought to open an xterm window
     
     %get just the directory
-    foo = fileparts(foo);
+    % foo = fileparts(foo);
     %opens a new xterm window
     %unix('xterm &');
     %opens a new xterm window cd to the specified folder
-    unix(['xterm  -e cd ' foo ' &']);
+    % unix(['xterm  -e cd ' foo ' &']);
+    system(['evince ' foo ' &']);
 end
 
 end
