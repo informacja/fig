@@ -32,6 +32,12 @@ function figPW(varargin)% FigType, ext, katalog)
 %   vectorReplacedByTIFFigBytes - size of figure, default = 50 000, 
 %       only for export fig argument
 %   scale - set the scalar, default = 1
+%   valScaleX - scale horizontally
+%   valScaleY - scale vertically
+%   fileName - set output files before extension text
+%   styleGrid - add grid scale
+%   font - Familly fontName (eg. "Verdana")
+%   plotContur - black contur (true)
 % 
 %  Example optioal params with value
 %   path - specyfy output file prefix of folder (with slash at end) path
@@ -67,9 +73,9 @@ function figPW(varargin)% FigType, ext, katalog)
 % arguments (Repeating)
 %     varargin string
 % end
-
+% set(0,'DefaultAxesFontName','CMU Serif Roman') 
 if nargin == 1
-    FigType = varargin{1};
+    FigType = varargin{1}; % change to fig nr
 end
 
 % p.KeepUnmatched = 1;
@@ -77,7 +83,7 @@ end
 % p.StructExpand  = 1;
 
 % Arguments default values
-valSaveTo = "figury/";
+valSaveTo = "fig/";
 valDefaultExt = "png";
 valNoTNR = "true";
 valInterpreter = 'tex';
@@ -95,6 +101,11 @@ valVectorReplacedByTIFFigBytes = 5e4;
 valScale = 1; 
 valScaleX = 1; 
 valScaleY = 1; 
+valFileName = "";
+valStyleGrid = false;
+valFont = "";
+valPlotContur = true;
+
 % valueAxis = "";
 % valNoMarginPDF = "";
 
@@ -122,6 +133,10 @@ argVectorReplacedByTIFFigBytes = "vectorReplacedByTIFFigBytes";
 argScale = "scale";
 argScaleX = "scaleX";
 argScaleY = "scaleY";
+argFileName = "fileName";
+argStyleGrid = "styleGrid";
+argFont = "font";
+argPlotContur = "plotContur";
 
 % -- Parser ---------------------------------------------------------------
 
@@ -144,6 +159,10 @@ addOptional(p, argTimestamp, valTimestamp);
 addOptional(p, argSaveCopyFig, valSaveCopyFig);
 addOptional(p, argSkipSaveAs, valSkipSaveAs);
 addOptional(p, argVectorReplacedByTIFFigBytes, valVectorReplacedByTIFFigBytes);
+addOptional(p, argFileName, valFileName);
+addOptional(p, argStyleGrid, valStyleGrid);
+addOptional(p, argFont, valFont);
+addOptional(p, argPlotContur, valPlotContur);
 
 % without default value
 optParam = [ argCopy, "TZ1", "TZ2", argNoMargin, argMaxF, argHighQualityPNG, ...
@@ -182,6 +201,10 @@ valVectorReplacedByTIFFigBytes = p.Results.vectorReplacedByTIFFigBytes;
 valScale = p.Results.scale;
 valScaleX = p.Results.scaleX;
 valScaleY = p.Results.scaleY;
+valFileName = string(p.Results.fileName);
+valStyleGrid = p.Results.styleGrid;
+valFont = p.Results.font;
+valPlotContur = p.Results.plotContur;
 
 if(~isempty(valNrF))
     figure(valNrF)
@@ -239,12 +262,17 @@ end
 
 [calling_mfile, index] = dbstack(0);
 mcName = [calling_mfile(length(calling_mfile)).name '_'];
-[path, filename, Fext] = fileparts( mfilename('.')); [~, folderName] = fileparts(pwd()); folderName = strcat(katalog, folderName, "_");%if(nargin == 1) folderName = katalog; nrName=''; end;                     % nazwa TEGO *.m-pliku
+[path, filename, Fext] = fileparts( mfilename('.')); [~, folderName] = fileparts(pwd()); 
 filename = strcat(mcName, fTitle, nrName, num2str(get(gcf,'Number')));
 filename = regexprep(filename, {'[%()*:\\" / ]+', '_+$'}, {'_', ''});
+folderName = regexprep(folderName, {'[%()*:\\" / ]+', '_+$'}, {'_', ''});
 if(size(filename,1) > 1) filename = filename(1);end;
-folderFilename = strcat(folderName,filename);
-
+if(strlength(valFileName) == 0)
+    folderName = strcat(katalog, folderName, "_");%if(nargin == 1) folderName = katalog; nrName=''; end;                     % nazwa TEGO *.m-pliku
+    folderFilename = strcat(folderName,filename);
+else
+    folderFilename = strcat(katalog,string(valFileName));
+end
 filenameExt = strcat(folderFilename, ext); % Default filename
 
 if (~ismember(argMaxF, p.UsingDefaults))
@@ -305,6 +333,10 @@ end
 
 if ( TNR )
     font = "Times";
+    if(strlength(valFont)>0)
+        font = "Verdana"; 
+        font = valFont; 
+    end
     childs = get( gcf, 'Children' );
     for(childAxInx = 1:length(childs) )
         ca = childs(childAxInx);
@@ -321,8 +353,7 @@ if ( TNR )
             set(ca,...
                 'FontName',font,...
                 'FontUnits','points',...
-                'FontWeight','normal',...
-                'FontSize',sgTitleFontSize);
+                'FontSize',sgTitleFontSize);% 'FontWeight','normal',...
             continue
         end
         if( 1 == strcmp( type, 'colorbar' ))
@@ -343,11 +374,13 @@ if ( TNR )
             %             'FontSize',FontSizeTicks);
             type = get( ca, 'type' );
 
-            set(get(ca,'XLabel'), ...
-                'FontWeight','normal',...
-                'FontSize',FontSizeLabels,...
-                'Interpreter',valInterpreter,...
-                'FontName',font);
+            if(get(ca.XLabel,'Interpreter') ~= "latex" )
+                set(get(ca,'XLabel'), ...
+                    'FontWeight','normal',...
+                    'FontSize',FontSizeLabels,...
+                    'Interpreter',valInterpreter,...
+                    'FontName',font);
+            end
             set(get(ca,'YLabel'),...
                 'FontWeight','normal',...
                 'FontSize',FontSizeLabels,...
@@ -384,12 +417,13 @@ if ( TNR )
             continue;
         end
 
-        set(get(ca,'Xlabel'), ...
-            'FontUnits','points',...
-            'FontWeight','normal',...
-            'FontSize',FontSizeLabels,...
-            'Interpreter',valInterpreter,...
-            'FontName',font);
+        if(get(ca.XLabel,'Interpreter') ~= "latex" )
+            set(get(ca,'Xlabel'), ...
+                'FontUnits','points',...                
+                'FontSize',FontSizeLabels,...
+                'Interpreter',valInterpreter,...
+                'FontName',font);%'FontWeight','normal',...
+        end
         set(get(ca,'Ylabel'),...
             'FontUnits','points',...
             'FontWeight','normal',...
@@ -429,6 +463,16 @@ end
 
 %%%%%%% Style %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+if(valPlotContur)
+    childs = get( gcf, 'Children' );         
+    for(childAxInx = 1:length(childs) ) % for old type plots
+        ca = childs(childAxInx);
+        type = get( ca, 'type' );        
+        if( 1 == strcmp( type, 'axes' ))
+            set(ca,'Box','on');
+        end
+    end
+end
 
 if (~ismember(argStyleLudwin, p.UsingDefaults))
     if (valStyleLudwin)
@@ -448,7 +492,7 @@ if (~ismember(argStyleLudwin, p.UsingDefaults))
             FontSizeTicks = 8;
             FontSizeLegend = 8;
             sgTitleFontSize = 15;
-            font = 'Times';
+            font = valFont;
 
             type = get( ca, 'type' );
 
@@ -595,7 +639,7 @@ if (~ismember(argStylePiotr, p.UsingDefaults))
             FontSizeTicks = 8;
             FontSizeLegend = 8;
             sgTitleFontSize = 15;
-            font = 'Times';
+            font = valFont;
 
             type = get( ca, 'type' );
             
@@ -653,6 +697,9 @@ if (~ismember(argStylePiotr, p.UsingDefaults))
             % 'FontWeight','Bold', 'LineWidth', 1,'layer','top');grid on
 
             if( 1 == strcmp( type, 'legend' ))
+                h = ca;
+                h.String = literateLATEX(h.String); 
+                set(h,'Interpreter','latex');
                 continue;
             end
 
@@ -753,6 +800,13 @@ if (~ismember(argStylePiotr, p.UsingDefaults))
         %             ylim(ca, valueAxis)
         %     %         set(ca, "axes", valueAxis); % not work because field is readOnly
         %         end
+    end
+end
+
+if (~ismember(argStyleGrid, p.UsingDefaults))
+    if (valStyleGrid)
+        arrayfun(@(x) grid(x,'on'), findobj(gcf,'Type','axes'))
+        arrayfun(@(x) grid(x,'minor'), findobj(gcf,'Type','axes'))
     end
 end
 
@@ -861,7 +915,7 @@ PosFigLong  = [.18/2 .2 .89  .690];   % Dell  % PosFigLong  = [.095 .20 .87  .68
 %PosFigShort = [.175  .2 .775 .690];   % Dell  % [.175  .2 .775 .725];   % Dell PosFigShort = [.195 .205 .775 .68];  % Asus
 PosFigShort = [.175  .195 .775 .690];   % Dell  % [.175  .2 .775 .725];   % Dell PosFigShort = [.195 .205 .775 .68];  % Asus
 %PosFigShort = [.15   .2 .775 .690];   % Dell  % [.175  .2 .775 .725];   % Dell PosFigShort = [.195 .205 .775 .68];  % Asus
-font = 'Times'; % 'Times';
+font = valFont; % 'Times';
 
 % strcmpi
 if( FigType==1 ) % 1 long figure
@@ -1147,19 +1201,29 @@ function [str] = makeExprBtwDollars(str,sign)
     b = strfind(str,begL);
     a = char(str);
     % a(b(2):e)
+
+    if(strlength(a(:)')==0) return; end
+
     s = size(a);
-    if(length(s)==3) 
+
+    if(length(s)==3) % dimensions
         for(i = 1:s(3)) % eg. for legend text
             if (~isempty(b{i}) && ~isempty(e{i}))
                 str = insertAfter(str(i), b, "$");
                 str = insertAfter(str(i), e+1, "$");
             end
         end
+    elseif(s(1)==1)
+        if (~isempty(b) && ~isempty(e))            
+            str = insertAfter(str, b, "$");
+            str = insertAfter(str, e+1, "$");
+        end
     else
-        if (~isempty(b) && ~isempty(e))
-            % todo
-            % str = insertAfter(str, b, "$");
-            % str = insertAfter(str, e+1, "$");
+        for(i = 1:s(1)) % eg. for legend text
+            if (~isempty(b{i}) && ~isempty(e{i}))
+                str = insertAfter(str, b, "$");
+                str = insertAfter(str, e+1, "$");
+            end
         end
     end
 end

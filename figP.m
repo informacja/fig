@@ -1,4 +1,4 @@
-function figP(filename, ext, TNR, valArgCopy, valOpenFolder, valOpenFile, valExportPdf, valOverwrite, valSkipSaveAs)
+function figP(filename, ext, TNR, valArgCopy, valOpenFolder, valOpenFile, valExportPdf, valOverwrite, valSkipSaveAs, valFileName)
 
 if(nargin<3) TNR = false; end
 if(nargin<4) valArgCopy = false; end
@@ -7,13 +7,19 @@ if(nargin<6) valOpenFile = false; end
 if(nargin<7) valExportPdf = false; end
 if(nargin<8) valOverwrite = false; end
 if(nargin<9) valSkipSaveAs = false; end
+% if(nargin<10) valFileName = ""; end
+
 
 tmp = char(ext);
 if(tmp(1) ~= '.')
     ext = strcat('.', ext);
 end
 h=gcf;
-fileNameExt = strcat(filename, ext);
+% if(isempty(fileName))
+    fileNameExt = strcat(filename, ext);
+% else
+%     fileNameExt = strcat(fileName, ext);
+% end
 if(valOverwrite)
     if(exist(fileNameExt, 'file'))
         delete(fileNameExt);
@@ -36,24 +42,50 @@ path = fileNameExt;
 if valExportPdf
     path = strcat(filename, ".pdf");
 end
-if valOpenFolder
-    if ismac
-        [status, results] = system((strcat('open -R "', string(path), '"')));
-    else
-        [filepath,name,ext] = fileparts(path);
-%         winopen(filepath) % open without select file 
-        command = char(strcat("explorer.exe /select,", '"',strcat(pwd,"\",fullfile(filepath,strcat(name,ext))),'"'));
-        dos(command);
+
+% noBrowserOrPhoneRunning = checkSystem();
+
+if(1)
+    if valOpenFolder
+        if ismac
+            [status, results] = system((strcat('open -R "', string(path), '"')));
+        else
+            if(ispc)
+            [filepath,name,ext] = fileparts(path);
+    %         winopen(filepath) % open without select file 
+            command = char(strcat("explorer.exe /select,", '"',strcat(pwd,"\",fullfile(filepath,strcat(name,ext))),'"'));
+            dos(command);
+            else
+                if(isunix)
+                    x=strcat("xdg-open ",pwd,"/",fileparts(path))
+                    system(x);    
+                else
+                    warning("Unknown Operating System. Open folder param skiped")
+                end
+            end
+        end
     end
-end
-if valOpenFile
-    finder(char(path))
+    if valOpenFile
+        finder(char(path))
+    end
 end
 
 return
 
 
-
+function [os] = OS()
+    result = evalc('ver');
+    startIndex = regexp(result,"\nOperating System:");
+    stopIndex = regexp(result,"\nJava Version:");
+    line = result(startIndex:stopIndex);
+    % strfind
+    % if()
+    os = "ubuntu";
+    i = strfind(line, os);
+    if(i>0)
+        disp("jest");
+    end
+end
 
 
 
@@ -487,3 +519,9 @@ end
 %
 %     figPW(nFig, ncol, 'png', 'figury/', 1, 1, 3)
 % end
+
+
+function [runable] = checkSystem()
+runable = 1;
+
+end
