@@ -68,26 +68,13 @@ if(~inBrowserRuned())
     if valOpenFile
         finder(char(path))
     end
+else
+    if(valOpenFile) disp("Skipped open file, probably you launched scripts in browser or on phone"); end
+    if(valOpenFolder) disp("Skipped open folder, probably you launched scripts in browser or on phone"); end
 end
 
 return
 
-function [browser] = inBrowserRuned()
-    browser = false;
-    if(ismac) return; end
-    if(isunix())
-        browser = true;
-        result = evalc('ver');
-        startIndex = regexp(result,"\nOperating System:");
-        stopIndex = regexp(result,"\nJava Version:");
-        line = result(startIndex:stopIndex);
-        os = "Ubuntu";
-        i = strfind(line, os);
-        if(i>0)
-            browser = false;
-        end
-    end    
-end
 
 
 
@@ -395,6 +382,26 @@ figP
 end
 % set(gcf,'Resize','off')
 
+function [browser] = inBrowserRuned()
+    browser = false;
+    if(ismac) return; end
+    if(isunix())
+        result = evalc('ver');
+        startIndex = regexp(result,"\nOperating System:");
+        stopIndex = regexp(result,"\nJava Version:");
+        line = result(startIndex:stopIndex);
+        % os = "Ubuntu";
+        % i = strfind(line, os);
+        % if(i>0)
+        %     browser = false;
+        % end
+        os = "aws";
+        i = strfind(line, os);
+        if(i>0)
+            browser = true;
+        end
+    end    
+end
 
 function [name,val] = nextname(bnm,sfx,ext,otp) %#ok<*ISMAT>
 % Return the next unused filename, incrementing a numbered suffix if required.
