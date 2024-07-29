@@ -540,11 +540,16 @@ set(groot,'defaultAxesTickLabelInterpreter','latex');
         %         grid minor
 
         childs = get( gcf, 'Children' );
-        if(childs.GridSize(2)>1)
-            skipYlabelPos = 1;
-            % TODO
-        else skipYlabelPos = 0; %noproblemo
+
+        skipYlabelPos = 1;
+        if(isfield(childs,"GridSize"))
+            if(childs.GridSize(2)>1)                
+                % TODO
+            else skipYlabelPos = 0; %no problemo
+            end
+        else fprintf(1,"Old styled figure, ylabel positioning skipped, use 'figConvert'\n");
         end
+
         for(childAxInx = 1:length(childs) )
 
             ca = childs(childAxInx);
