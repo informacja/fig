@@ -30,8 +30,8 @@ if(nargin)
             switch(param1)
                 case "gm",  gMain(dir);
                 case "hq",  figPW('hqpng', 1, 'openFolder', 1, 'goldenRatio', 0, 'saveCopyFig', 0, 'skipSaveAs', 1, 'tileSpacing', 'tight', 'tilePadding', 'none') % shorted param setup explanation 
-                case "l",   width=1280; height=1024; figPW("styleLudwin", 1)%, 'rePositonYlabel', 1, "figX", width, 'figY', height)
-                case "la",  figPSW, fprintf(1,"la")
+                case "l",   width=1280; height=1024; figPW("styleLudwin", 1, "exportPDF", 1)%, 'rePositonYlabel', 1, "figX", width, 'figY', height)
+                case "la",  figPSW("exportPDF", 1, "styleLudwin", 1)
                 case "p",   figPW stylepiotr goldenratio labely itp
                 case "c",   figPW copy
                 otherwise,  fprintf(1,"Unrecognized parameter '%s'", param1)
