@@ -1,4 +1,5 @@
 function save2folder(s)
+% todo: if no param, example use of struct
     
     figPath = "figBase/"; 
     
@@ -6,7 +7,7 @@ function save2folder(s)
         251
         253
         % 501
-        % 502 % done by shringking
+        % 502 % done by shrinking
         503
         509
         1013
@@ -20,7 +21,7 @@ function save2folder(s)
         4003
     ];    
     if(isfield(s,"figNrList")) figNrList = s.figNrList; end
-    if(isfield(s,"exportPath")) figPath = s.figPath; end
+    if(isfield(s,"figPath")) figPath = s.figPath; end
     % if(isfield(s,"skipSavedFig")) skipSavedFig = s.skipSavedFig; end
     
     figFilenames = dir(strcat(figPath,"*.fig"));
@@ -32,20 +33,24 @@ function save2folder(s)
     end
     num = sort(num); % figNr
     
+    i = [];
     toSave = [];
-    for(i = figNrList')
-        i = find(num==i);
-        toSave = [toSave; num(i)]; 
+    if(iscolumn(figNrList))
+        figNrList = figNrList';
+    end
+    for(i = figNrList)
+        j = find(num==i);
+        toSave = [toSave; num(j)]; 
     end
     if(isempty(toSave))
         disp("No figures on list")
     end
-    toSave = num;
+    % toSave = num; % save all
     
     c = 0;
     for (i = toSave') 
         c = c+1;
-        if(numel(figFilenames)>= c) continue; end
+        if(numel(figFilenames)>= c && numel(figFilenames) <= numel(toSave)) continue; end
         figure(i);   
         figPW("path", figPath, "exportPDF", 0,"openFolder",1,"saveCopyFig", 1,"skipSaveAs", 1, "TNR", 0);
         close(i);

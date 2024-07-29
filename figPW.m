@@ -1,9 +1,10 @@
 function figPW(varargin)% FigType, ext, katalog)
-% Part of 3 functions: figP, figPW and figPSW for many figures.
+% Part of 3 functions: figP, figPW and figPSW. Use the last one to save many figures.
 %
 % Usage:
 %       figPW("copy", 1) % Figure will be copied to clipboard
-% or just (fast version) save to file with timestamp
+%       figPW copy       % short version, with auto setting parameters 
+% or just (fast version) save current figure to file with timestamp in filename
 %       figPW
 %
 % Function gets pair of arguments. (as "copy" above), if not specified
@@ -16,6 +17,7 @@ function figPW(varargin)% FigType, ext, katalog)
 %   openFolder - open exported file directory,
 %   argOpenFile - open file in system default program,
 %   tileSpacing - if is posible apply of this: "loose" (default) | "compact" | "tight" | "none"
+%   tilePadding - "none" (default) | "loose" | "compact" | "tight"
 %   overwrite - delete file before exportig, to avoid permission confilct on Windows
 %   timestamp - add date and time to exported filename
 %   hqPNG - export high quality png file,
@@ -38,6 +40,8 @@ function figPW(varargin)% FigType, ext, katalog)
 %   styleGrid - add grid scale
 %   font - Familly fontName (eg. "Verdana")
 %   plotContur - black contur (true)
+%   goldenRatio - default = 1, if none zero, use as floating point scalar
+%       pixels, if negative scalar value use as 3.25 inch article column size
 % 
 %  Example optioal params with value
 %   path - specyfy output file prefix of folder (with slash at end) path
@@ -51,7 +55,12 @@ function figPW(varargin)% FigType, ext, katalog)
 % Example 2: 
 %       figPW("path", exportPath, "exportPDF", 1,"openFolder",1,"saveCopyFig", ...
 %              backup,"skipSaveAs",1, "scale", mnoznik);
+% Example 3:
+%       figPW art
 
+% TODO 
+% h = figure(1); h.Position = [1        1        1000*1.618033      1000  ]; 
+% overlafGithubLimit = 50 MB for files
 
 % schowek do pdfa no margin
 % size legend
@@ -74,13 +83,56 @@ function figPW(varargin)% FigType, ext, katalog)
 %     varargin string
 % end
 % set(0,'DefaultAxesFontName','CMU Serif Roman') 
-if nargin == 1
-    FigType = varargin{1}; % change to fig nr
-end
 
-% p.KeepUnmatched = 1;
-% p.PartialMatching = 1;
-% p.StructExpand  = 1;
+if nargin == 1
+    % inName = inputname(1) % not working
+  while 1 % used to skip section of code statement by break; keyword 
+    if(isnumeric( varargin{1} ))
+        FigType = varargin{1}; % change to fig nr
+    elseif(isText( varargin{1} ))
+        if( strcmpi(varargin{1}, "art") || strcmpi(varargin{1}, '"art"') ) % set default for article arguments
+            c=1; 
+            varargin{c} = "exportPDF";  c=c+1; varargin{c} = 1; c=c+1; 
+            % varargin{c} = "maxF";       c=c+1; varargin{c} = 1; c=c+1;
+            % varargin{c} = "goldenRatio";c=c+1; varargin{c} = -2; c=c+1;
+            varargin{c} = "openFolder"; c=c+1; varargin{c} = 1; c=c+1;
+            varargin{c} = "skipSaveAs"; c=c+1; varargin{c} = 1; c=c+1; 
+            varargin{c} = "vectorReplacedByTIFFigBytes"; c=c+1; varargin{c} = 2^30; c=c+1;            
+            % varargin{5} = "stylePiotr"; varargin{6} = 1;
+            % varargin{c} = "maxF";       c=c+1; varargin{c} = 1; c=c+1;
+            % nargin = numel(varargin)
+            % varargin{1} = "maxoveleaf50";
+        elseif( strcmpi(varargin{1}, "hq") || strcmpi(varargin{1}, '"hq"') ) % set default for article arguments
+            c=1; 
+            varargin{c} = "hqpng";      c=c+1; varargin{c} = 1; c=c+1;
+            varargin{c} = "openFolder"; c=c+1; varargin{c} = 1; c=c+1;
+            varargin{c} = "goldenRatio";c=c+1; varargin{c} = 0; c=c+1;
+            varargin{c} = "saveCopyFig";c=c+1; varargin{c} = 0; c=c+1;
+            varargin{c} = "skipSaveAs"; c=c+1; varargin{c} = 1; c=c+1; 
+            varargin{c} = "tileSpacing"; c=c+1; varargin{c} = "tight"; c=c+1; 
+            varargin{c} = "tilePadding"; c=c+1; varargin{c} = "none"; c=c+1;  % none ?                      
+            % (convertIfOldTypeFig, 1)
+        elseif( strcmpi(varargin{1}, "copy") || strcmpi(varargin{1}, '"copy"') ) % set default for article arguments
+            c=1; varargin{c} = "copy"; c=c+1; varargin{c} = 1; c=c+1;
+        else
+            % unmached = 1
+            break;
+        end
+        fprintf(1, "   figPW("); comma = ', '; c = c-1;
+        for( i = 1:2:c )
+            if(c-i < 2) comma = ''; end
+            secParam = string(varargin{i+1});
+            if(isstring(varargin{i+1})) secParam = strcat( "'", string(varargin{i+1}), "'"); end
+            fprintf(1, "'%s', %s%s", varargin{i}, secParam, comma );
+        end
+        fprintf(1, ") %% shorted param setup explanation \n");
+    else
+        varargin{1}
+    end
+    break  % prevents infinite loop
+  end % while 1
+        
+end
 
 % Arguments default values
 valSaveTo = "fig/";
@@ -103,8 +155,10 @@ valScaleX = 1;
 valScaleY = 1; 
 valFileName = "";
 valStyleGrid = false;
-valFont = "";
+valFont = "Helvetica";
 valPlotContur = true;
+valGoldenRatio = 1; % scaling factor
+valTilePadding = 'none';
 
 % valueAxis = "";
 % valNoMarginPDF = "";
@@ -137,11 +191,17 @@ argFileName = "fileName";
 argStyleGrid = "styleGrid";
 argFont = "font";
 argPlotContur = "plotContur";
+argGoldenRatio = "goldenRatio";
+argTilePadding = "tilePadding";
+argRePositonYlabel = "rePositonYlabel";
 
 % -- Parser ---------------------------------------------------------------
 
-p = inputParser;
-p.FunctionName = mfilename('name');
+p = inputParser; p.FunctionName = mfilename('name');
+
+% p.KeepUnmatched = 1; % dont stop if param not maching 
+% p.PartialMatching = 1;
+% p.StructExpand  = 1;
 
 % with default values
 
@@ -163,16 +223,18 @@ addOptional(p, argFileName, valFileName);
 addOptional(p, argStyleGrid, valStyleGrid);
 addOptional(p, argFont, valFont);
 addOptional(p, argPlotContur, valPlotContur);
+addOptional(p, argGoldenRatio, valGoldenRatio);
+addOptional(p, argTilePadding, valTilePadding);
 
 % without default value
 optParam = [ argCopy, "TZ1", "TZ2", argNoMargin, argMaxF, argHighQualityPNG, ...
-    argAxis, argHorizontalLegend, argTileSpacing, argNrF, argScale, argScaleX, argScaleY ];
+    argAxis, argHorizontalLegend, argTileSpacing, argNrF, argScale, argScaleX, argScaleY, argRePositonYlabel];
 
 for i = 1:length(optParam)
     addOptional(p,optParam(i),[]);
 end
 
-parse(p,varargin{:});
+parse(p, varargin{:});
 
 % -- Get values from parser -----------------------------------------------
 
@@ -205,6 +267,9 @@ valFileName = string(p.Results.fileName);
 valStyleGrid = p.Results.styleGrid;
 valFont = p.Results.font;
 valPlotContur = p.Results.plotContur;
+valGoldenRatio = p.Results.goldenRatio;
+valTilePadding = p.Results.tilePadding;
+valRePositonYlabel = p.Results.rePositonYlabel;
 
 if(~isempty(valNrF))
     figure(valNrF)
@@ -275,15 +340,6 @@ else
 end
 filenameExt = strcat(folderFilename, ext); % Default filename
 
-if (~ismember(argMaxF, p.UsingDefaults))
-    %     if(valMaxF)
-    %      a = get(gcf,'Position');
-    %      gcf.WindowState = 'maximized';
-    set(gcf, 'Position', get(0, 'Screensize'));
-    %      jFrame = get(handle(gcf),'JavaFrame');
-    %      jFrame.setMaximized(true);
-    %     end
-end
 
 %%%%%%% Fast save %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -328,6 +384,7 @@ end
 %             zapiszFig(nrPliku, nrKol, 'pgm');
 %             zapiszFig(nrPliku, nrKol, 'png');
 %             zapiszFig(nrPliku, nrKol, 'ppm');
+
 
 %%%%%%% Font Times New Roman %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -439,8 +496,7 @@ if ( TNR )
         set(get(ca,'Legend'),...
             'FontUnits','points',...
             'FontSize',FontSizeLegend,...
-            'Interpreter',valInterpreter,...
-            'Location','NorthEast',...
+            'Interpreter',valInterpreter,... % 'Location','NorthEast',...
             'FontName',font);
     end
 end
@@ -476,13 +532,19 @@ end
 
 if (~ismember(argStyleLudwin, p.UsingDefaults))
     if (valStyleLudwin)
-
+allHyl = []; % ylabel pos matrix
+set(groot,'defaultAxesTickLabelInterpreter','latex'); 
         % arrayfun(@(x) grid(x,'on'), findobj(gcf,'Type','axes'))
         % arrayfun(@(x) grid(x,'minor'), findobj(gcf,'Type','axes'))
 
         %         grid minor
 
         childs = get( gcf, 'Children' );
+        if(childs.GridSize(2)>1)
+            skipYlabelPos = 1;
+            % TODO
+        else skipYlabelPos = 0; %noproblemo
+        end
         for(childAxInx = 1:length(childs) )
 
             ca = childs(childAxInx);
@@ -553,6 +615,7 @@ if (~ismember(argStyleLudwin, p.UsingDefaults))
                     set(h,'FontSize',FontSizeLabels);
                     
                     h=get(a,'YLabel');
+                    allHyl = [allHyl; h];
                     set(h,'Interpreter','latex');
                     set(h,'FontName',font);
                     set(h,'FontSize',FontSizeLabels);
@@ -620,6 +683,23 @@ if (~ismember(argStyleLudwin, p.UsingDefaults))
         %             ylim(ca, valueAxis)
         %     %         set(ca, "axes", valueAxis); % not work because field is readOnly
         %         end
+ 
+if(~skipYlabelPos)
+        values = [];
+        for(i = 1:numel(allHyl))
+            values = [values; allHyl(i).Position(1)];
+        end
+        % hist(values)
+        m = min(values)
+        for(i = 1:numel(allHyl))
+% allHyl(i).Position(1)
+            allHyl(i).Position(1) = m;
+        end
+end
+
+        x0=1920; y0=-160;     
+        width=1280; height=1024;
+        set(gcf,'position',[x0,y0,width,height])
     end
 end
 
@@ -627,6 +707,11 @@ end
 
 if (~ismember(argStylePiotr, p.UsingDefaults))
     if (valStylePiotr)
+
+        defaultInterpreter = "latex";
+        if (~ismember(argInterpreter, p.UsingDefaults))
+            defaultInterpreter = valInterpreter;
+        end
 
         childs = get( gcf, 'Children' );
          
@@ -650,31 +735,31 @@ if (~ismember(argStylePiotr, p.UsingDefaults))
                 h=get(ca,'xlabel');
                 h.String = literateLATEX(h.String); % make polish letters for latex
                 %         set(h, 'FontSize', 11)
-                set(h,'Interpreter','latex');
+                set(h,'Interpreter',defaultInterpreter);
                 h=get(ca,'xaxis');               
-                h.TickLabelInterpreter = 'latex';
+                h.TickLabelInterpreter = defaultInterpreter;
                 
                 
                 h=get(ca,'ylabel'); 
                 h.String = literateLATEX(h.String); 
                 %         set(h, 'FontSize', 11)
-                set(h,'Interpreter','latex');
+                set(h,'Interpreter',defaultInterpreter);
                 h=get(ca,'yaxis');               
-                h.TickLabelInterpreter = 'latex';
+                h.TickLabelInterpreter = defaultInterpreter;
                 
                 h=get(ca,'zlabel');
                 h.String = literateLATEX(h.String); 
                 %         set(h, 'FontSize', 11)
-                set(h,'Interpreter','latex');
+                set(h,'Interpreter',defaultInterpreter);
                 h=get(ca,'zaxis');               
-                h.TickLabelInterpreter = 'latex';
+                h.TickLabelInterpreter = defaultInterpreter;
                 
                 h=get(ca,'title');
                 h.String = literateLATEX(h.String); 
-                set(h,'Interpreter','latex');
+                set(h,'Interpreter',defaultInterpreter);
                 h=get(ca,'subtitle');
                 h.String = literateLATEX(h.String); 
-                set(h,'Interpreter','latex');
+                set(h,'Interpreter',defaultInterpreter);
 
                 continue
             end
@@ -682,7 +767,7 @@ if (~ismember(argStylePiotr, p.UsingDefaults))
             if( 1 == strcmp( type, 'subplottext' ))
                 h = ca;
                 h.String = literateLATEX(h.String); 
-                set(h,'Interpreter','latex');
+                set(h,'Interpreter',defaultInterpreter);
                 continue
             end
             %         set(ca,...
@@ -699,7 +784,7 @@ if (~ismember(argStylePiotr, p.UsingDefaults))
             if( 1 == strcmp( type, 'legend' ))
                 h = ca;
                 h.String = literateLATEX(h.String); 
-                set(h,'Interpreter','latex');
+                set(h,'Interpreter',defaultInterpreter);
                 continue;
             end
 
@@ -718,7 +803,7 @@ if (~ismember(argStylePiotr, p.UsingDefaults))
                     if( 1 == strcmp( atype, 'legend' ))
                         h = a;
                         h.String = literateLATEX(h.String); 
-                        set(h,'Interpreter','latex');
+                        set(h,'Interpreter',defaultInterpreter);
                         set(h,'FontName',font);
                         set(h,'FontSize',FontSizeLegend);
                         continue
@@ -726,19 +811,20 @@ if (~ismember(argStylePiotr, p.UsingDefaults))
                     % set(a,'FontSize', FontSizeLabels);
                     h=get(a,'XLabel');
                     h.String = literateLATEX(h.String); 
-                    set(h,'Interpreter','latex');
+                    set(h,'Interpreter',defaultInterpreter);
                     set(h,'FontName',font);
                     set(h,'FontSize',FontSizeLabels);
                     
                     h=get(a,'YLabel');
                     h.String = literateLATEX(h.String); 
-                    set(h,'Interpreter','latex');
+                    set(h,'Interpreter',defaultInterpreter);
                     set(h,'FontName',font);
                     set(h,'FontSize',FontSizeLabels);
 
                     h=get(a,'Title');
                     h.String = literateLATEX(h.String); 
-                    set(h,'Interpreter','latex');
+                    set(h,'Interpreter',defaultInterpreter);
+                    % set(h,'FontName',font);
                     set(h,'FontSize', FontSizeTitle);
 
 
@@ -756,7 +842,7 @@ if (~ismember(argStylePiotr, p.UsingDefaults))
                 
 %                 title("fontname","times")
 %                 title( get(ca,'Title').String, 'interpreter','latex')
-                set(ca.Title,'Interpreter','latex'); %?? 
+                set(ca.Title,'Interpreter',defaultInterpreter); %?? 
 %                 set(gca.Title,'xFontSize',20);
 %                  set(gca,'FontSize',20);
             end
@@ -811,50 +897,51 @@ if (~ismember(argStyleGrid, p.UsingDefaults))
 end
 
 
-%-----------
+%----------- TiledLayout (spacing, padding)
+if (~ismember(argTilePadding, p.UsingDefaults))
 
+    childs = get( gcf, 'Children' );  % old type, simple styled figure
+    for(childAxInx = 1:length(childs) )
+        ca = childs(childAxInx);
+        type = get( ca, 'type' );
+        if( 1 == strcmpi( type, 'tiledlayout' ))
+            gcaP = gca().Parent;
+            gcaP.Padding = valTilePadding;
+        end
+    end
+end
+% ---
 if (~ismember(argTileSpacing, p.UsingDefaults))
 
-        childs = get( gcf, 'Children' );  % old type, simple styled figure
-        for(childAxInx = 1:length(childs) )
-
-            ca = childs(childAxInx);
-
-            type = get( ca, 'type' );
-
-            if( 1 == strcmp( type, 'axes' ))
-                continue
-            end
-
-            if( 1 == strcmp( type, 'legend' ))
-                continue;
-            end
-
-            if( 1 == strcmp( type, 'tiledlayout' ))
-                gcaP = gca().Parent;
-                gcaP.TileSpacing = valTileSpacing;
-%                 ch = gcaP.Children;
-%                 set(ca.Title,...
-%                     'FontName',font,...
-%                     'FontWeight','normal',...
-%                     'FontSize',sgTitleFontSize);
-% 
-% %                 nums = tilenum(flipud(gca))
-%                 for( i = 1:numel(ch))
-%                     a = ch(i);
-%                     atype = get( a, 'type' );
-%                     if( 1 == strcmp( atype, 'legend' ))
-%                         h = a;
-%                         set(h,'Interpreter','latex');
-%                         set(h,'FontName',font);
-%                         set(h,'FontSize',FontSizeLegend);
-%                         continue
-            end
+    childs = get( gcf, 'Children' );  
+    for(childAxInx = 1:length(childs) )
+        ca = childs(childAxInx);
+        type = get( ca, 'type' );
+        if( 1 == strcmpi( type, 'tiledlayout' ))
+            gcaP = gca().Parent;
+            gcaP.TileSpacing = valTileSpacing;
         end
+    end
 end
 
-%%%%%%% Scale %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%% Size %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% valFigUnits pixels, points, cale
+
+% TODO
+% if(valDimX ~= 1)
+%     PosFig = get(gcf,'Position');
+%     PosFig(3) = PosFig(3)*valScaleX;
+%     set(gcf, 'Position', PosFig);
+% end
+% 
+% if(valDimY ~= 1)
+%     PosFig = get(gcf,'Position');
+%     PosFig(4) = PosFig(4)*valScaleY;
+%     set(gcf, 'Position', PosFig);
+% end
+
+%%%%%%% Scaling figure - position %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 if(valScale ~= 1)
     PosFig = get(gcf,'Position');
@@ -874,22 +961,62 @@ if(valScaleY ~= 1)
     set(gcf, 'Position', PosFig);
 end
 
+if (~ismember(argMaxF, p.UsingDefaults))
+    %     if(valMaxF)
+    %      a = get(gcf,'Position');
+    %      gcf.WindowState = 'maximized';
+    set(gcf, 'Position', get(0, 'Screensize'));
+    %      jFrame = get(handle(gcf),'JavaFrame');
+    %      jFrame.setMaximized(true);
+    %     end
+end
+
+if (~ismember(argGoldenRatio, p.UsingDefaults))             
+        if(valGoldenRatio)
+            defaultSize = 1000*valGoldenRatio; %px absolut scaling standard 
+            if(valGoldenRatio==1) defaultSize = gcf().Position(3); end
+            set(gcf, 'Units', 'pixels');
+            if(valGoldenRatio < 0)
+                % or if in browser?
+                defaultSize = 3.25*abs(valGoldenRatio); %inches [colummn size in trnse]
+                set(gcf, 'Units', 'inches');
+            end
+            GOLDEN_RATIO = 1.618033988749894848204586834365638;
+            set(gcf, 'Position', [1 1 defaultSize*GOLDEN_RATIO defaultSize]);
+        end
+end
+
+%%%%%%% ylabel rePositon %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+if (~ismember(argRePositonYlabel, p.UsingDefaults))
+    if(valRePositonYlabel)
+        % for gcf, all axis get ylabel pos, get max and set to all ax
+    end
+end
+
 %%%%%%% PNG HQ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 if (~ismember(argHighQualityPNG, p.UsingDefaults))
     %     figP(folderFilename, ext )% copyOnly
     %     quality
-    if (valArgCopy)
-        fprintf("\t* %s\n", strcat("Skopiowano do schowka: ", filename));
-        copygraphics(gcf)
-    end
+    copyGraphObj2Clipboard(valArgCopy, filename, gcf);
     
-    filenameExtHQ = strcat(folderFilename, "HQ", ext); % Default filename
+    if(ext(1) ~= '.') ext = strcat('.', ext); end
+    folderFilename = strcat(folderFilename, "HQ");
+    filenameExtHQ = strcat(folderFilename, ext); % Default filename
     % fid = fopen(filenameExtHQ, 'w')
     % pause
     % fclose(fid);
+
+    
     print( filenameExtHQ, '-dpng', '-r300'); % Zapisz jako tenMPlik_nrOstatniejFigury.png
-    fprintf("\t* %s\n", strcat("Zapisano w wysokiej jakości przed procesem skalowania: ", filenameExtHQ));
+    fid = fopen(filenameExtHQ); fileSizeMB = 0;
+    if(fid)
+        fseek(fid, 0, 'eof');
+        filesize = ftell(fid);
+        fclose(fid);    
+        fileSizeMB = filesize/2^10/2^10; 
+    end
+    fprintf("\t* %s %.2g MB\n", strcat("Zapisano w wysokiej jakości przed procesem skalowania: ", filenameExtHQ), string(fileSizeMB));
 end
 
 %%%%%%% Figure Scaling %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -964,14 +1091,26 @@ if (valExportPdf)
     % end
     
     lastwarn('') % catch
-    exportgraphics(gcf, fileNamePDF, 'BackgroundColor','none', 'ContentType', 'vector')
-    fprintf(1,'\t* Zapisano wektorowy PDF: "%s"\n', fileNamePDF);
+    exportgraphics(gcf, fileNamePDF, 'BackgroundColor','none', 'ContentType', 'vector') % cd(prefdir); open('matlab.prf'); % add line: JavaMemHeapMax=I190000
+    %-- METHOD #1 --                    
+    % s = dir('myfile.dat');         
+    % filesize = s.bytes             
+    %-- METHOD #2 --
+    fid = fopen(fileNamePDF);
+    fseek(fid, 0, 'eof');
+    filesize = ftell(fid);
+    fclose(fid);    
+    fileSizeMB = filesize/2^10/2^10; 
+    
+    fprintf(1,'\t* Zapisano wektorowy PDF: "%s" %.1f MB\n', fileNamePDF, fileSizeMB);
     [msgstr, msgid] = lastwarn;
     switch msgid %identifier
         case 'MATLAB:print:ContentTypeImageSuggested'
-            n = strcat(folderFilename, ".tif");
-            exportgraphics(gcf, n, 'BackgroundColor','white','Resolution',300)    
-            fprintf(1,'\t* Zapisano optymalny TIFF: "%s"\n', n);
+            if(filesize > valVectorReplacedByTIFFigBytes)
+                n = strcat(folderFilename, ".tif");
+                exportgraphics(gcf, n, 'BackgroundColor','white','Resolution',300)    
+                fprintf(1,'\t* Zapisano optymalny TIFF: "%s"\n', n);
+            end
         otherwise             
     end
 
@@ -1060,10 +1199,7 @@ if( FigType==5 ) % 3 as is on monitor
 end
 if( FigType==6 )
 
-    if (valArgCopy)
-        fprintf("\t* %s\n", strcat("Skopiowano do schowka: ", filename));
-        copygraphics(gcf)
-    end
+    copyGraphObj2Clipboard(valArgCopy, filename, gcf);
 
     figP(folderFilename, ext, TNR, valArgCopy, valOpenFolder, valOpenFile, valExportPdf, valOverwrite, valSkipSaveAs)
     return;
@@ -1147,8 +1283,7 @@ end
 
 %%%%%%% Figure final save %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if (valArgCopy)
-    fprintf("\t* %s\n", strcat("Skopiowano do schowka: ", filename));
-    copygraphics(gcf)
+    copyGraphObj2Clipboard(valArgCopy, filename, gcf);
 end
 
 figP(folderFilename, ext, TNR, valArgCopy, valOpenFolder, valOpenFile, valExportPdf, valOverwrite, valSkipSaveAs)
@@ -1354,6 +1489,22 @@ end
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%nn1s2c
 
+%% d
+function copyGraphObj2Clipboard(valArgCopy, fileName, obj)
+% First param is DPI scale for copied graphic object
+if (valArgCopy)
+    if(inBrowserOrMobileRuned)
+        st = dbstack; namestr = st.name;
+        fprintf(1, "\t- Skipped %s feature, probably you launched scripts in browser or on smartphone\n", namestr); 
+        return;
+    end
+    if( 1 < valArgCopy )
+        copygraphics(obj, 'Resolution', valArgCopy);
+    else copygraphics(obj);
+    end
+    fprintf(1,"\t* Skopiowano do schowka: %s\n", fileName);
+end
+end
 %% make new figure with one subplot of from old fig
 % nFig = 6;
 % for i=14
