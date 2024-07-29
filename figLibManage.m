@@ -34,6 +34,7 @@ savepath % if warnings try run MATLAB as admin
 % 0.0.1.0 - added unistallation option
 % 0.0.1.1 - listOfFiles in loop implementation
 % 0.1.0.0 - figLib/extras folders init                                      20.07.24
+% 1.0.0.0 - figLib manage (download & uninstall)                        29.07.24
 
 
 % TODO try catch, webwrite
