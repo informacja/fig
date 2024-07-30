@@ -17,7 +17,7 @@ proj_path = pwd; cd(fullfile(userpath)); fprintf(1,'Uninstalling ... "figLib"\n'
 rmpath(strcat(fullfile(userpath),"/figLib")); rmpath(strcat(fullfile(userpath),"/figLib/extras")); savepath;
 cd(proj_path); fprintf(1,'Succesfully uninstalled "figLib"\n')
 ```
-## For saving figures without margin to pdf (for article)
+## Example For saving figures to pdf (for article)
 
 ```matlab
 figPW art % paste and run in Command Window
