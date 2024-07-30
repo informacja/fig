@@ -26,5 +26,9 @@ figPW art % paste and run in Command Window
 *If you have deleted or permission error, check you have opened file in PDF reader*
 
 ### Article data flow proposed to use with figLib
-What is interesting you don't have to open the github.com is possible to use only Github Desktiop and Overleaf. (in real work process). Everything what is needed to have an account on github and enable synchronization.
+What is interesting you don't have to open the github.com, is possible to use only Github Desktiop and Overleaf. 
+
+(in real work process). Everything what is needed, is an account on github and enabled synchronization with Desktop app and Overleaf.
+
+
 ![](./Article%20data%20flow%20proposed%20to%20use%20with%20figLib.png)
