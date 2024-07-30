@@ -10,6 +10,7 @@ function fig(varargin)
 % Pomysł:
 % Gdy jest debug=1 or logOutput=1
 % save log with timestamp, and add timesampt to sghtitle in figPW
+% figFFT rename to? figFFTplot() figFplot() and figTplot for time domain
 
 
 shortcutsFirstParam = [
