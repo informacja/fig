@@ -20,7 +20,7 @@ shortcutsFirstParam = [
     "la" % style Ludwin & save all fig
     "p"  % make current figure pretty and save
     "c"  % backup & copy to clippboard 
-    "le" % ? masz pomysł 
+    "le" % low efficiency. Create simple figures
     "bp" % big picture, all important figures in onpage PDF
     ];
 
