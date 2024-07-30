@@ -26,4 +26,4 @@ figPW art % paste and run in Command Window
 *If you have deleted or permission error, check you have opened file in PDF reader*
 
 ### Article data flow proposed to use with figLib
-![](./Article%20data%20flow%20proposed%20to%20use%20with%20figLib.pdf)
+![](./Article%20data%20flow%20proposed%20to%20use%20with%20figLib.png)
