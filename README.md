@@ -10,7 +10,6 @@ addpath(strcat(fullfile(userpath),"/figLib")); addpath(strcat(fullfile(userpath)
 cd(proj_path); clc; fprintf(1,'To save current figure, just type here "figPW" (if not exist, empty will be created)\nAfter that you can type "help figPW" for more information about function arguments.\nIf you want save all opened figures just run "figPSW". For more information about whole library type "help fig"\n')
 ```
 
-
 ### Library uninstallation
 Copy and paste this in your MATLAB console
 ```matlab
@@ -23,9 +22,8 @@ cd(proj_path); fprintf(1,'Succesfully uninstalled "figLib"\n')
 ```matlab
 figPW art % paste and run in Command Window
 ```
-<!-- 
-*Install Ghostscript (works only for Win or Linux) *
- -->
-
  
 *If you have deleted or permission error, check you have opened file in PDF reader*
+
+### Article data flow proposed to use with figLib
+![](./Article%20data%20flow%20proposed%20to%20use%20with%20figLib.pdf)
