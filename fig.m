@@ -20,6 +20,7 @@ shortcutsFirstParam = [
     "p"  % make current figure pretty and save
     "c"  % backup & copy to clippboard 
     "le" % ? masz pomysł 
+    "bp" % big picture, all important figures in onpage PDF
     ];
 
 if(nargin)

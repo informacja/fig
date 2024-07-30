@@ -7,7 +7,7 @@ Copy and paste this in your MATLAB console, if you want to update use _git pull_
 proj_path = pwd; cd(fullfile(userpath)); if(exist("figLib","dir")) rmdir("figLib", 's'); end
 gitclone("https://github.com/informacja/fig", "figLib", Depth=1);
 addpath(strcat(fullfile(userpath),"/figLib")); addpath(strcat(fullfile(userpath),"/figLib/extras")); savepath;
-cd(proj_path); clc; fprintf(1,'To save current figure, just type here "figPW" (if not exist, empty will be created)\nAfter that you can type "help figPW" for more information about function arguments.\nIf you want save all opened figures just run "figPSW". For more about whole library type "help fig"\n')
+cd(proj_path); clc; fprintf(1,'To save current figure, just type here "figPW" (if not exist, empty will be created)\nAfter that you can type "help figPW" for more information about function arguments.\nIf you want save all opened figures just run "figPSW". For more information about whole library type "help fig"\n')
 ```
 
 ## For saving figures without margin to pdf (for article)
