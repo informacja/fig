@@ -1,5 +1,5 @@
 function openInEditorPSW(varargin)
-Open important files in editor, usefull when often changeing computer 
+% Open important files in editor, usefull when often changeing computer 
 % have int in main file
 
 % without extension! string array
