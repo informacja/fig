@@ -1,4 +1,4 @@
-# figLib 💽  [![Alpha - Early access](https://img.shields.io/static/v1?label=Alpha&message=Early+access&color=2ea44f)](https://github.com/informacja/fig/blob/main/README.md#library-installation)
+# figLib 💽  [![Alpha - Early access](https://img.shields.io/static/v1?label=Alpha&message=Early+access&color=2ea44f)](https://github.com/informacja/fig/tree/main?tab=readme-ov-file#library-installation)
 
 Library created for saving figures in Matlab. 
 
