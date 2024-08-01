@@ -1,6 +1,12 @@
-function [s] = figFFT(x, fs, s) % mayby return P1 vector?
-% Requaire args; x, fs
-% Optional struct as 3td argument with (non zero to enable) fields:
+function [s] = figTDplot(x, fs, s) % mayby return ... vector?
+% Requaire args; x, fs. Plots Time domain series.
+% Optional struct to axis scaling as 3td argument
+% Example 1:
+%   figTDplot(x, fs) title(""); subtitle("a)"); % x - time data, fs - frequency sampling
+
+
+% with (non zero to enable) fields:
+
 %   log - x and y axes are logaritized. Uses loglog() plot func.
 %   logx - x axes are logaritized. Uses semilogx() plot func.
 %   logy - y axes are logaritized. Uses semilogy() plot func.
@@ -11,7 +17,7 @@ function [s] = figFFT(x, fs, s) % mayby return P1 vector?
 %   ylimes - cut axis, 2 scalar vector (beg, end)
 %   LineWidth
 %   displayName (for legend)
-%
+
 % Example 1:
 %   figFFT(x, fs) title(""); subtitle("a)"); % x - time data, fs - frequency sampling
 %
@@ -32,12 +38,41 @@ if( nargin==1 && isstruct(x) && isfield(x, "historyAxis") ) setYLim(x); return; 
 if(nargin<2) fprintf(1,"Provide arguments. If you don know just type: help %s", mfilename('name'));  return; end
 
 vN = string(inputname(1));
-LW = 1.2;
+LW = 1.2; % for baseline
 maxTu = 1e3;
+currTag = "Time Domain";
+kolP1 = ''; kolAf = 'k'; % default plot colors for first data
+xN = sprintf("%s", vN);
+
+% if(~isempty(tags) && ~isempty(find(tags==currTag,1))) 
+%     kolP1 = ''; kolAf = ''; 
+% end % use random plot colors
+
+    % if(plotP1) 
+        plot(x,kolP1,"LineWidth",1,'DisplayName',xN); hold on; 
+
+    % if(plotAf) plot(f(1:length(Af)),Af,kolAf,"LineWidth",LW,'DisplayName',lAf); hold off; end; ylabel("|P1(f)|")
+L = length(x);dt = 1/fs;
+legend; axis tight;
+
+        dziel = 1; jedn = "";
+     
+    if(exist("zakres",'var'))
+           if(zakres(1)>1e3 && zakres(end)>1e3 && L>1e3) dziel = 1e3; jedn = "[kS]"; end
+
+        % xlabel(sprintf("Sampling frequency: %g [Hz] Range: %d:%d [samples] T: %g [s]", x.fs, zakres(1), zakres(end). L*dt))
+        xlabel(sprintf("T = %.2f [s] fs = %g [kHz] Range: %g:%g L = %g %s Time Series [Samples]", ...
+            L*dt, fs/1e3, zakres(1)/dziel, zakres(end)/dziel, L/dziel, jedn))
+    else
+           if(L>1e3) dziel = 1e3; jedn = "[kS]"; end
+
+        xlabel(sprintf("T = %.2f [s] fs = %g [kHz] L = %d %s Time Series [Samples]", L*dt, fs/dziel, L/dziel,jedn))
+    end
+
+
+return
 dbScale = 0;
-smooFuncName = ""; txInVars = ""; currTag = "Frequency Domain";
-kolP1 = 'c'; kolAf = 'k'; % default plot colors for first data
-lP1 = sprintf("%s P1", vN); lAf = sprintf("%s Af", vN);
+smooFuncName = ""; txInVars = "";  lAf = sprintf("%s Af", vN);
 plotP1 = 1; plotAf = 1;
 % inDataNames = [];
 if(nargin<3)

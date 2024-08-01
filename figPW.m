@@ -1,5 +1,6 @@
 function figPW(varargin)% FigType, ext, katalog)
-% Part of 3 functions: figP, figPW and figPSW. Use the last one to save many figures.
+% Saves current figure, main part of figLib.
+% Central part of 3 functions: figP, figPW and figPSW. Use the last one to save many figures.
 %
 % Usage:
 %       figPW("copy", 1) % Figure will be copied to clipboard

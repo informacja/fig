@@ -1,4 +1,5 @@
 function figPSW(varargin)
+% Save all opened figures
 % Example use:
 %       figPSW("exportPDF",1)
 

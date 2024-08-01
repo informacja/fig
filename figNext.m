@@ -1,6 +1,6 @@
 function const = figNext(varargin)
-% Auto couting figure number variable. Up to 9 figures per file counting (one digit).
-%   In your main.m code use;
+% Auto couting figure number. Up to 9 figures per file counting (one digit).
+%   In your Base file (eg. main.m) use code;
 %       global nrF; nrF = 0;
 %   and in every nested file code run
 %       figNext, figure(nrF);
@@ -9,7 +9,6 @@ function const = figNext(varargin)
 %       figure(figNext(0)+3)
 %   To count up in this file just place this line at the begninig of called script
 %       figNext(mfilename('name'));
-
 
 global nrF; global lastFn; global lockFn; global DEBUGfigNext; % numberFigure, lastFilename, lockFilename - for conting up eg. 10 20 30
 DEBUG = DEBUGfigNext;

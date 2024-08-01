@@ -1,4 +1,6 @@
 function save2folder(s)
+% Backup figures before export to article (prevent matlab figures loss, if app crash)
+
 % todo: if no param, example use of struct
     
     figPath = "figBase/"; 

@@ -1,4 +1,5 @@
 function figP(filename, ext, TNR, valArgCopy, valOpenFolder, valOpenFile, valExportPdf, valOverwrite, valSkipSaveAs, valFileName)
+% For internal library use only. Last function of 3 base functions. Call stack is figPSW -> figPW -> figP
 
 if(nargin<3) TNR = false; end
 if(nargin<4) valArgCopy = false; end

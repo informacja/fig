@@ -1,5 +1,5 @@
 function [fileContent] = gMain (dataDirFilenames)
-% Generate main.m
+% Generate main.m with info about data 
 %  Optional param "dataDir" to data, will make a comment about dataset
 % Example 1
 %   gMain("data")

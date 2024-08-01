@@ -1,11 +1,14 @@
 function fig(varargin)
-% figLib caller function
+% figLib caller function, short params:
 %   gm - call gMain(dir), to generate main.m file in current working dir
 %   hq - call figPW hq, to save PNG with some more default params for styling
-%   l  - styleLudwin
-%   la - as above for all figures
+%   l  - use styleLudwin to current figure
+%   la - as above, but for all figures
+%   c  - backup & copy current figure to clippboard (only Desktop)
 %   Example 1:
 %       fig gm
+%   Example 2:
+%       fig c
 
 % Pomysł:
 % Gdy jest debug=1 or logOutput=1
@@ -46,7 +49,7 @@ if(nargin)
     % fig gm sourcePath
     %     gMain(dir) | gMain(sourcePath)
 else
-
+    help(mfilename("name"))
     % list functions
     % https://www.mathworks.com/help/matlab/matlab_prog/create-a-help-summary-contents-m.html
 

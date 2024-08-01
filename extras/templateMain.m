@@ -1,5 +1,5 @@
 % When you run fromm command window, open this file to edit
-editorPSW( mfilename('name') )%, "regrQEMG", "QEMG_RMN" )
+openInEditorPSW( mfilename('name') )%, "regrQEMG", "QEMG_RMN" )
 clear, close all, % clc
 figLibSet
 

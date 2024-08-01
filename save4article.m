@@ -1,5 +1,7 @@
 function save4article(s)
-% on macOS load from file (dla niezawodności)
+% Automation with params to save fig for article
+
+% on macOS load from file (for reliability)
     sourcePath = "figBase/"; 
     exportPath = "article/fig/";
     prefix = "";  filename = ""; postfix = ""; 
