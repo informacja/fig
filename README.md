@@ -31,7 +31,7 @@ What is interesting you don't have to open the github.com, is possible to use on
 
 Everything what is needed, is an account on github and enabled synchronization with Desktop app and Overleaf.
 
-![Article data flow proposed to use with figLib](https://github.com/user-attachments/assets/e0cf6be5-307e-429d-bff4-18c973188dbc)
+![Article data flow proposed to use with figLib](https://github.com/user-attachments/assets/5757b454-d6f7-4069-a5f3-f7fe4237752d)
 
 #### Basic functions
 
