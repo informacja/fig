@@ -22,9 +22,12 @@ shortcutsFirstParam = [
     "l"  % style Ludwin
     "la" % style Ludwin & save all fig
     "p"  % make current figure pretty and save
+    "r"  % ratio (FIbonacci Golden Ratio) proportion; 4 presentation in latex
     "c"  % backup & copy to clippboard 
     "le" % low efficiency. Create simple figures
     "bp" % big picture, all important figures in onpage PDF
+    "f2p" % fig2pdf open all fig in current folder and save to pdf
+    "tz" % like 2 book export
     ];
 
 if(nargin)
@@ -37,8 +40,9 @@ if(nargin)
                 case "hq",  figPW('hqpng', 1, 'openFolder', 1, 'goldenRatio', 0, 'saveCopyFig', 0, 'skipSaveAs', 1, 'tileSpacing', 'tight', 'tilePadding', 'none') % shorted param setup explanation 
                 case "l",   width=1280; height=1024; figPW("styleLudwin", 1, "exportPDF", 1)%, 'rePositonYlabel', 1, "figX", width, 'figY', height)
                 case "la",  figPSW("exportPDF", 1, "styleLudwin", 1)
-                case "p",   figPW stylepiotr goldenratio labely itp
-                case "c",   figPW copy
+                case "p",   figPW art %stylepiotr goldenratio labely itp
+                case "c",   figPW copy, 
+                case "r",   if(1) figConvert, figPW; end %oldTypeFig
                 otherwise,  fprintf(1,"Unrecognized parameter '%s'", param1)
             end
         end

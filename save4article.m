@@ -6,7 +6,7 @@ function save4article(s)
     exportPath = "article/fig/";
     prefix = "";  filename = ""; postfix = ""; 
     saveFigNr = 0; % use true when save directly, whithout load form fig file [nameing convention]
-    inch3dot25 = 1;
+    inch3dot25 = -1;
     timeout = 10;
 
     PL = 1; EN = 2;
@@ -128,10 +128,10 @@ function save4article(s)
         % sP = char(sourcePath);
         % if(1) prefix = strcat(sP(8:end),prefix); end
         
-        figPW("path", exportPath, "exportPDF", 1, "openFolder", 1, "TNR", 1, ...
+        figPW("path", exportPath, "exportPDF", 1, "openFolder", 1, "TNR", 1, ... 
             "saveCopyFig", 0, "skipSaveAs", 1, "scale", mnoznik, style, sVal, ...
             "fileName", strcat(prefix, filename, string(postfix)),'font',fontFamily, ...
-            'goldenRatio', inch3dot25, "interpreter", 'none');
+            'goldenRatio', inch3dot25, "interpreter", 'tex');
         % close(i);
     end
 end

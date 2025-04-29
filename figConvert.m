@@ -22,9 +22,9 @@ else
    end
 end
 
-if(nargin < 3) 
-    subplotDim1 = 4;
-    subplotDim2 = 2;
+if(nargin < 3)
+    subplotDim1 = 3;
+    subplotDim2 = 1;
 end
 nrOfPlots = subplotDim1*subplotDim2;
 
@@ -56,7 +56,7 @@ for( sp = 1:nrOfPlots)%numel(h.Childrens)
     if(sp == nrOfPlots) for( j = 1:nrOfPlots-1) delete(nexttile(nrOfPlots)); end; end
     a = nexttile; 
     a.Layout.Tile = nrOfPlots;
-    if(sp == nrOfPlots) delete(nexttile(nrOfPlots)); end 
+    if(sp == nrOfPlots && sp ~= 1) delete(nexttile(nrOfPlots)); end 
     ax.Parent = tcl;
     ax.Layout.Tile = sp;
 end

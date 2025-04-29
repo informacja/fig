@@ -14,7 +14,7 @@ global nrF; global lastFn; global lockFn; global DEBUGfigNext; % numberFigure, l
 DEBUG = DEBUGfigNext;
 
 inputNrF = nrF;
-if(isempty(nrF)) nrF = 0; end
+if(isempty(nrF)||isnan(nrF)) nrF = 1; end
 filesCallStackNonImporta = 2; st = dbstack; stName = [ st.name " " ]; stName = stName(1:end-1);
 if(numel(st)==1) nrF = nrF + 1; fprintf(1,"nrF var incremeted\n", getVarName(nrF)); const = nrF; return; end
 currFn = st(2).name;
@@ -23,7 +23,7 @@ if(isempty(dM)) dM = find(stName==st(end).name); end
 dC = find(stName==currFn);
 distFromMainToCurr = dM(1)-dC(1);
 while 1
-    if(isnan(nrF)) warning(nrFvarWasNaN); inputNrF = 1; nrF = 1; break; end
+    if(isnan(nrF)) nrFvarWasNaN = string(nrF); warning(nrFvarWasNaN); inputNrF = 1; nrF = 1; break; end
     if(nargin<1)% no params
         if(isempty(lastFn)) % First time this function called
             nrF = nrF+10^distFromMainToCurr; break;
@@ -85,6 +85,7 @@ while 1
                 % dM = find(stName=="main")
                 dLock = find(stName==lockFn);
                 distFromMainToCurrLock = dM-dLock;
+                if(distFromMainToCurrLock==0) distFromMainToCurrLock = 1; end
                 if(~isempty(distFromMainToCurrLock))
                     c = char(string(nrF)); % character
                     d = str2double(c(1:distFromMainToCurrLock)); % digit
@@ -143,7 +144,7 @@ hall = findall(groot,'Type','figure');
 if(~isempty(hall))
     n = int32([hall.Number]); figNrExistedAndChanged = 0;
     r = nrF - inputNrF; % roznica
-    if(r<1) r = 1; end
+    if(r<1||isnan(r)||isempty(r)) r = 1; end
     while ( ~isempty(find(n==nrF)) && r)
         fprintf(1,"In: %d Propose: %d ", inputNrF, nrF); warning("This figure number exist")
         nrF = nrF+r;

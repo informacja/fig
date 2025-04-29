@@ -14,6 +14,7 @@ function [s] = figFFTplot(x, fs, s) % mayby return P1 vector?
 
 % Changelog by PSW:
 % * new smoothing metod for logy plots 20.07.24
+% * multi baseline, bug fixed 24.02.25
 
 % TODO% TODO
 %   nrF - plot on specified figure number
@@ -21,12 +22,38 @@ function [s] = figFFTplot(x, fs, s) % mayby return P1 vector?
 %   ylimes - cut axis, 2 scalar vector (beg, end)
 %   LineWidth
 %   displayName (for legend)
+% [ ] figStruct(paramLike name, data) packer 2 compare timeseries
 %
 % db as in pinknoise example
 % is plot or return vector only
 % save history to s, to make the same scale
 % a = next tioel
+structLen = 0; cnt = 0;
 if( nargin==1 && isstruct(x) && isfield(x, "historyAxis") ) setYLim(x); return; end % reasign YLim
+% tag
+
+if( isstruct(x) ) % recurnet?
+
+    structLen = numel(x);
+
+    for(i=1:structLen)
+        s.shortTitle = 1;
+        % s.historyAxis = [];
+
+    % s.inputname = "X(t)";
+        objFieldsNames = fieldnames(x);
+        for(k=1:numel(objFieldsNames))
+            % string(objFieldsNames(k))
+            eval(string(objFieldsNames(k)) + " = getfield(x(i), string(objFieldsNames(k)));")
+            % s
+            hold on; eval("figFFTplot(" + string(objFieldsNames(k)) +", fs, s);"); hold off;
+            %
+        end
+
+    end
+    % try historyAxis
+    return
+end
 
 if(nargin<2) fprintf(1,"Provide arguments. If you don know just type: help %s", mfilename('name'));  return; end
 
@@ -35,8 +62,10 @@ LW = 1.2;
 maxTu = 1e3;
 dbScale = 0;
 smooFuncName = ""; txInVars = ""; currTag = "Frequency Domain";
-kolP1 = 'c'; kolAf = 'k'; % default plot colors for first data
-lP1 = sprintf("%s P1", vN); lAf = sprintf("%s Af", vN);
+% kolP1 = 'c'; kolAf = 'k'; % default plot colors for first data
+kolP1 = 'c'; kolAf = ''; % default plot colors for first data
+shortTitle = 0;
+
 plotP1 = 1; plotAf = 1;
 % inDataNames = [];
 if(nargin<3)
@@ -46,7 +75,7 @@ else
     if(isfield(s,"logx"))   logx = s.logx; end
     if(isfield(s,"logy"))   logy = s.logy; end
     if(exist("logx") && exist("logy"))
-        if(logx && logy) log = 1; end
+        if(logx && logy) log = 1; logx = 0; logy = 0; end
     end
     if(isfield(s,"db"))     dbScale = s.db; end
 
@@ -56,21 +85,32 @@ else
     if(isfield(s,getVarName(plotAf))) plotAf = s.plotAf; end
     if(isfield(s,"tag")) currTag = s.tag; end
 
+    if(isfield(s,"inputname")) vN = s.inputname; end
+
+    if(isfield(s,"shortTitle")) shortTitle = s.shortTitle; end
+    separate = 0;
+    if(isfield(s,"separate")) separate = s.separate; end
     % depracated - tag in axis is enough solution % if(isfield(s,getVarName(inDataNames))) s.inDataNames, inDataNames = strcat(s.inDataNames, " ", vN); end
 
     % nrF = 1;
     % xlimes = [];
 end
+
+lP1 = sprintf("%s P1", vN); lAf = sprintf("%s Af", vN);
+
 % inDataNames = get(gca,'Tag'), if(isempty(inDataNames)) set(gca,'Tag', vN); else set(gca,'Tag', strcat(inDataNames, " ", vN)); end; inDataNames = get(gca,'Tag')
 %   set(gca,'Tag', strcat(inDataNames, " ", vN));
 % inDataNames = get(gca,'Tag'),
-
+possibleTags = ["log" "logx" "logy"];
+for(pt = 1:numel(possibleTags))
+    if(exist(possibleTags(pt), "var")) currTag = currTag+" "+possibleTags(pt); end
+end
 if(~isfield(s,"inDataNames")) s.inDataNames = vN; else s.inDataNames(numel(s.inDataNames)+1) = vN; end
 Y = fft(x);
 L = length(Y);
 P2 = abs(Y/L);
-P1 = P2(1:ceil(L/2));
-P1(2:end-1) = 2*P1(2:end-1);
+P1 = P2(1:ceil(L/2),:);
+P1(2:end-1,:) = 2*P1(2:end-1,:);
 dt = 1/fs;
 f = fs/L*(0:(ceil(L/2)));
 
@@ -87,8 +127,8 @@ if(Tu <= 1 ) error("Tu zbyt małe"); end
 axes = findobj( gcf, 'Type', 'Axes' ); tags = [];
 for( a = axes ) tags = [tags; a.Tag]; end
 
-if(~isempty(tags) && ~isempty(find(tags==currTag,1))) 
-    kolP1 = ''; kolAf = ''; 
+if(~isempty(tags) && isempty(find(tags==currTag,1)))
+    kolP1 = ''; kolAf = '';
 end % use random plot colors
 % TEMPORARY DISABELED
 % if(~exist("logx", "var") && ~exist("log", "var") && ~exist("logy", "var"))
@@ -103,31 +143,45 @@ end % use random plot colors
 %         Af =  movmean(P1,Tu); smooFuncName = "movmean(Tu)";
 %     else filtrWidmaMTF; smooFuncName = "MTF(Tu)"; end
 % else
-    Af = smoothdata(P1,"gaussian",Tu); smooFuncName = 'smoothdata(P1,"gaussian",Tu)';
+Af = smoothdata(P1,"gaussian",Tu); smooFuncName = 'smoothdata(P1,"gaussian",Tu)';
 % end
 
 if(exist("log", "var") && log)
     if(dbScale) Af = db(Af); if(plotP1) P1 = db(P1); end; end
-    if(plotP1) loglog(f(1:length(P1)),P1,kolP1,"LineWidth",1,'DisplayName',lP1); hold on; end
-    if(plotAf) loglog(f(1:length(Af)),Af,kolAf,"LineWidth",LW,'DisplayName',lAf); hold off; end; legend('Location','southwest'); ylabel("log|P1(f)|");  if(dbScale)  ylabel("Power [dB]"); end
+    if(plotP1) h=loglog(f(1:length(P1)),P1,kolP1,"LineWidth",1,'DisplayName',lP1); hold on; end
+    if(plotAf) h=loglog(f(1:length(Af)),Af,kolAf,"LineWidth",LW,'DisplayName',lAf); hold off; end; legend('Location','southwest'); ylabel("log|P1(f)|");  if(dbScale)  ylabel("Power [dB]"); end
+     set(gca,"XScale","log"); set(gca,"YScale","log")
 elseif(exist("logx", "var") && logx)
-    if(plotP1) semilogx(f(1:length(P1)),(P1),kolP1,"LineWidth",1,'DisplayName',lP1); hold on; end
-    if(plotAf) semilogx(f(1:length(Af)),(Af),kolAf,"LineWidth",LW,'DisplayName',lAf); hold off; end; ylabel("|P1(f)|");
+    if(plotP1) h=semilogx(f(1:length(P1)),(P1),kolP1,"LineWidth",1,'DisplayName',lP1); hold on; end
+    if(plotAf) h=semilogx(f(1:length(Af)),(Af),kolAf,"LineWidth",LW,'DisplayName',lAf); hold off; end; ylabel("|P1(f)|");
+    set(gca,"XScale","log")
 elseif(exist("logy", "var") && logy)
     if(dbScale) Af = db(Af); if(plotP1) P1 = db(P1); end; end
-    if(plotP1) semilogy(f(1:length(P1)),P1,kolP1,"LineWidth",1,'DisplayName',lP1); hold on; end
-    if(plotAf) semilogy(f(1:length(Af)),Af,kolAf,"LineWidth",LW,'DisplayName',lAf); hold off; end; ylabel("log|P1(f)|"); if(dbScale)  ylabel("Power [dB]"); end
+    if(plotP1) h=semilogy(f(1:length(P1)),P1,kolP1,"LineWidth",1,'DisplayName',lP1); hold on; end
+    if(plotAf) h=semilogy(f(1:length(Af)),Af,kolAf,"LineWidth",LW,'DisplayName',lAf); hold off; end; ylabel("log|P1(f)|"); if(dbScale)  ylabel("Power [dB]"); end
+    set(gca,"YScale","log")
 else % linear scale
-    if(plotP1) plot(f(1:length(P1)),P1,kolP1,"LineWidth",1,'DisplayName',lP1); hold on; end
-    if(plotAf) plot(f(1:length(Af)),Af,kolAf,"LineWidth",LW,'DisplayName',lAf); hold off; end; ylabel("|P1(f)|")
+    if(plotP1) h=plot(f(1:length(P1)),P1,kolP1,"LineWidth",1,'DisplayName',lP1); hold on; end
+    if(plotAf) h=plot(f(1:length(Af)),Af,kolAf,"LineWidth",LW,'DisplayName',lAf); hold off; end; ylabel("|P1(f)|")
 end
-legend;
+
+% if(isfield(s, "fileName")) vN = s.fileName; end
+numE = numel(s.fileName);
+st{numE} = {};
+for(p=1:numE)
+    st{p} = char("Af " + s.fileName(p));
+end
+st = st';
+if(isstruct(st)) st = {st{1}}; end
+set(h, {'DisplayName'}, st)
+legend; hold off;
 
 if(~isfield(s,"historyAxis")) s.historyAxis = []; end
 % if(~exist("s.historyAxis",'var') s.historyAxis = []; end
 s.historyAxis = [s.historyAxis gca];
 for( i = 1:numel(s.historyAxis) ) txInVars = sprintf("%s %s", txInVars, s.inDataNames(i)); end
-title(sprintf("Single-Sided Amplitude Spectrum of: %s", txInVars ));
+if(shortTitle) title(sprintf("Single-Sided Amplitude Spectrum"));
+else title(sprintf("Single-Sided Amplitude Spectrum of: %s", vN )); end
 txP1 = ""; if(plotP1) txP1 = "P1 is original spectrum, "; end
 txAf = ""; if(plotAf) txAf = sprintf("%s smoothed with %s", getVarName(Af), smooFuncName); end
 subtitle(sprintf("%s%s", txP1, txAf));
@@ -162,7 +216,6 @@ ylabel('Power (dB)')
 % [length(f),length(ff)]
 % [f(1), ff(1)]
 
-
 P2 = abs(Y/L);
 P1 = P2(1:L/2+1);
 P1(2:end-1) = 2*P1(2:end-1);
@@ -170,7 +223,7 @@ P1(2:end-1) = 2*P1(2:end-1);
 f = fs/L*(0:(L/2));
 Af =  movmean(P1,Tu);
 nexttile, semilogx(f,(P1),"LineWidth",1,'Color','c'); hold on
-semilogx(f,(Af),'k')
+semilogx(f,(Af),'k'); hold off;
 title("Single-Sided Amplitude Spectrum of X(t)")
 xlabel("f (Hz)")
 ylabel("|P1(f)|"); axis tight
