@@ -23,6 +23,30 @@ function save4article(s)
     if(strcmp(exportPath, "article/fi/")) inch3dot25 = -2; end % negative scale for article column
     if(isfield(s,"inch3dot25")) inch3dot25 = s.inch3dot25; end
     if(isfield(s,"timeout")) timeout = s.timeout; end
+
+
+    if(~isempty(ismember(findall(0,'type','figure'),groot))) % jeśli są otwarte figury, to je eksportuj     
+        F = findobj('Type', 'figure');
+        for(i=1:numel(F))
+            figure(F(i))
+            mnoznik = 1;
+            sVal = 1; style = "stylePiotr"; 
+            % style = "styleGrid"; sVal = 1; 
+            if(saveFigNr)
+            postfix = i;
+            else
+            postfix = char(postfix + 1);
+            end
+            if(isempty(filename)) filename = string(i); end
+            fontFamily = "Helvetica";
+            
+            figPW("path", exportPath, "exportPDF", 1, "openFolder", 1, "TNR", 1, ... 
+            "saveCopyFig", 0, "skipSaveAs", 1, "scale", mnoznik, style, sVal, ...
+            "fileName", strcat(prefix, filename, string(postfix)),'font',fontFamily, ...
+            'goldenRatio', inch3dot25, "interpreter", 'tex',"goldenRatio",-1.6);
+        end
+        return
+    end
     
     nbrfig = 1;
     handle = findobj(allchild(groot), 'flat', 'type', 'figure', 'number', nbrfig);
@@ -112,7 +136,7 @@ function save4article(s)
         figure(i);
         
         mnoznik = 1;
-        sVal = 0; style = "stylePiotr"; 
+        sVal = 1; style = "stylePiotr"; 
         % if( (i == cetroidsFigNr) ) mnoznik = 1.6; end
         % if(i == fig503M) mnoznik = 1.8;  end
         % if(i == fig509E) mnoznik = 2.2;  end
