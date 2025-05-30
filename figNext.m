@@ -13,8 +13,8 @@ function const = figNext(varargin)
 global nrF; global lastFn; global lockFn; global DEBUGfigNext; % numberFigure, lastFilename, lockFilename - for conting up eg. 10 20 30
 DEBUG = DEBUGfigNext;
 
-inputNrF = nrF;
 if(isempty(nrF)||isnan(nrF)) nrF = 1; end
+inputNrF = nrF;
 filesCallStackNonImporta = 2; st = dbstack; stName = [ st.name " " ]; stName = stName(1:end-1);
 if(numel(st)==1) nrF = nrF + 1; fprintf(1,"nrF var incremeted\n", getVarName(nrF)); const = nrF; return; end
 currFn = st(2).name;
