@@ -2,6 +2,13 @@
 
 Library created for saving figures in Matlab. 
 
+### Article data flow proposed to use with figLib
+What is interesting you don't have to open the github.com, is possible to use only Github Desktiop and Overleaf (in real work process). 
+
+Everything what is needed, is an account on github and enabled synchronization with Desktop app and Overleaf.
+
+![Article data flow proposed to use with figLib](https://github.com/user-attachments/assets/5757b454-d6f7-4069-a5f3-f7fe4237752d)
+
 ### Library installation
 Copy and paste this in your MATLAB console, if you want to update use _git pull_ command
 ```matlab
@@ -25,13 +32,6 @@ figPW art % paste and run in Command Window
 ```
  
 *If you have deleted or permission error, check you have opened file in PDF reader*
-
-### Article data flow proposed to use with figLib
-What is interesting you don't have to open the github.com, is possible to use only Github Desktiop and Overleaf (in real work process). 
-
-Everything what is needed, is an account on github and enabled synchronization with Desktop app and Overleaf.
-
-![Article data flow proposed to use with figLib](https://github.com/user-attachments/assets/5757b454-d6f7-4069-a5f3-f7fe4237752d)
 
 #### Basic functions
 
