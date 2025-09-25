@@ -5,6 +5,8 @@ function fig(varargin)
 %   l  - use styleLudwin to current figure
 %   la - as above, but for all figures
 %   c  - backup & copy current figure to clippboard (only Desktop)
+%   p  - make current figure pretty and save
+   
 %   Example 1:
 %       fig gm
 %   Example 2:

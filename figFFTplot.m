@@ -108,9 +108,16 @@ end
 if(~isfield(s,"inDataNames")) s.inDataNames = vN; else s.inDataNames(numel(s.inDataNames)+1) = vN; end
 Y = fft(x);
 L = length(Y);
+if(size(Y,1)>size(Y,2))
 P2 = abs(Y/L);
+else
+P2 = abs(Y/L)';
+end
 P1 = P2(1:ceil(L/2),:);
 P1(2:end-1,:) = 2*P1(2:end-1,:);
+for(i=1:size(P1,2))    
+    P1(:,i) = P1(:,i)/sum(P1(:,i));
+end
 dt = 1/fs;
 f = fs/L*(0:(ceil(L/2)));
 
@@ -143,7 +150,7 @@ end % use random plot colors
 %         Af =  movmean(P1,Tu); smooFuncName = "movmean(Tu)";
 %     else filtrWidmaMTF; smooFuncName = "MTF(Tu)"; end
 % else
-Af = smoothdata(P1,"gaussian",Tu); smooFuncName = 'smoothdata(P1,"gaussian",Tu)';
+[Af,Tu] = smoothdata(P1,"gaussian"); smooFuncName = 'smoothdata(P1,"gaussian")';
 % end
 
 if(exist("log", "var") && log)
@@ -166,13 +173,13 @@ else % linear scale
 end
 
 % if(isfield(s, "fileName")) vN = s.fileName; end
-numE = numel(s.fileName);
+numE = numel(s.inDataNames);
 st{numE} = {};
 for(p=1:numE)
-    st{p} = char("Af " + s.fileName(p));
+    st{p} = char("Af " + s.inDataNames(p));
 end
-st = st';
 if(isstruct(st)) st = {st{1}}; end
+st = unique(st)';
 set(h, {'DisplayName'}, st)
 legend; hold off;
 

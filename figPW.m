@@ -750,7 +750,7 @@ if (~ismember(argStylePiotr, p.UsingDefaults))
                 set(ca,'FontSize',11); % fig in fig case
                 set(ca,'Box','on');
                 h=get(ca,'xlabel');
-                h.String = literateLATEX(h.String); % make polish letters for latex
+                if(strcmp(defaultInterpreter,"latex")) h.String = literateLATEX(h.String); end % make polish letters for latex
                 %         set(h, 'FontSize', 11)
                 set(h,'Interpreter',defaultInterpreter);
                 h=get(ca,'xaxis');               
@@ -758,24 +758,24 @@ if (~ismember(argStylePiotr, p.UsingDefaults))
                 
                 
                 h=get(ca,'ylabel'); 
-                h.String = literateLATEX(h.String); 
+                if(strcmp(defaultInterpreter,"latex")) h.String = literateLATEX(h.String); end
                 %         set(h, 'FontSize', 11)
                 set(h,'Interpreter',defaultInterpreter);
                 h=get(ca,'yaxis');               
                 h.TickLabelInterpreter = defaultInterpreter;
                 
                 h=get(ca,'zlabel');
-                h.String = literateLATEX(h.String); 
+                if(strcmp(defaultInterpreter,"latex")) h.String = literateLATEX(h.String); end
                 %         set(h, 'FontSize', 11)
                 set(h,'Interpreter',defaultInterpreter);
                 h=get(ca,'zaxis');               
                 h.TickLabelInterpreter = defaultInterpreter;
                 
                 h=get(ca,'title');
-                h.String = literateLATEX(h.String); 
+                if(strcmp(defaultInterpreter,"latex")) h.String = literateLATEX(h.String); end
                 set(h,'Interpreter',defaultInterpreter);
                 h=get(ca,'subtitle');
-                h.String = literateLATEX(h.String); 
+                if(strcmp(defaultInterpreter,"latex")) h.String = literateLATEX(h.String); end
                 set(h,'Interpreter',defaultInterpreter);
 
                 continue
@@ -783,7 +783,7 @@ if (~ismember(argStylePiotr, p.UsingDefaults))
 
             if( 1 == strcmp( type, 'subplottext' ))
                 h = ca;
-                h.String = literateLATEX(h.String); 
+                if(strcmp(defaultInterpreter,"latex")) h.String = literateLATEX(h.String); end
                 set(h,'Interpreter',defaultInterpreter);
                 continue
             end
@@ -800,7 +800,7 @@ if (~ismember(argStylePiotr, p.UsingDefaults))
 
             if( 1 == strcmp( type, 'legend' ))
                 h = ca;
-                h.String = literateLATEX(h.String); 
+                if(strcmp(defaultInterpreter,"latex")) h.String = literateLATEX(h.String); end
                 set(h,'Interpreter',defaultInterpreter);
                 continue;
             end
@@ -819,7 +819,7 @@ if (~ismember(argStylePiotr, p.UsingDefaults))
                     atype = get( a, 'type' );
                     if( 1 == strcmp( atype, 'legend' ))
                         h = a;
-                        h.String = literateLATEX(h.String); 
+                        if(strcmp(defaultInterpreter,"latex")) h.String = literateLATEX(h.String); end
                         set(h,'Interpreter',defaultInterpreter);
                         set(h,'FontName',font);
                         set(h,'FontSize',FontSizeLegend);
@@ -827,19 +827,19 @@ if (~ismember(argStylePiotr, p.UsingDefaults))
                     end
                     % set(a,'FontSize', FontSizeLabels);
                     h=get(a,'XLabel');
-                    h.String = literateLATEX(h.String); 
+                    if(strcmp(defaultInterpreter,"latex")) h.String = literateLATEX(h.String); end
                     set(h,'Interpreter',defaultInterpreter);
                     set(h,'FontName',font);
                     set(h,'FontSize',FontSizeLabels);
                     
                     h=get(a,'YLabel');
-                    h.String = literateLATEX(h.String); 
+                    if(strcmp(defaultInterpreter,"latex")) h.String = literateLATEX(h.String); end
                     set(h,'Interpreter',defaultInterpreter);
                     set(h,'FontName',font);
                     set(h,'FontSize',FontSizeLabels);
 
                     h=get(a,'Title');
-                    h.String = literateLATEX(h.String); 
+                    if(strcmp(defaultInterpreter,"latex")) h.String = literateLATEX(h.String); end
                     set(h,'Interpreter',defaultInterpreter);
                     % set(h,'FontName',font);
                     set(h,'FontSize', FontSizeTitle);
@@ -999,7 +999,9 @@ if (~ismember(argGoldenRatio, p.UsingDefaults))
                 set(gcf, 'Units', 'inches');
             end
             GOLDEN_RATIO = 1.618033988749894848204586834365638;
-            set(gcf, 'Position', [1 1 defaultSize*GOLDEN_RATIO defaultSize]);
+            % licznik=2; pionowa=4;
+            % axis_proportion=2/4; set(gcf, 'Units', 'inches');
+            set(gcf, 'Position', [1 1 defaultSize*GOLDEN_RATIO defaultSize]);%*axis_proportion*licznik 
         end
 end
 
@@ -1366,10 +1368,12 @@ function [str] = makeExprBtwDollars(str,sign)
             end
         end
     elseif(s(1)==1)
-        if (~isempty(b) && ~isempty(e))            
-            str = insertAfter(str, b, "$");
-            str = insertAfter(str, e+1, "$");
+        if (~isempty(b) && (isnumeric(b))) 
+            for(bb = b) str = insertAfter(str, b, "$"); end;
         end
+        if (~isempty(e) && (isnumeric(e))) 
+            for(ee = e) str = insertAfter(str, ee+1, "$"); end; 
+        end        
     else
         for(i = 1:s(1)) % eg. for legend text
             if (~isempty(b{i}) && ~isempty(e{i}))

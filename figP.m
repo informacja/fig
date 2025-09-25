@@ -35,6 +35,7 @@ if(~valSkipSaveAs)
         exportgraphics(gcf, fileNameExt, 'BackgroundColor','white')
         fprintf(1, ['\t* Zapisano rysunek: "%s%s"\n'], filename, ext);
     else
+        set(gcf, 'Renderer', 'opengl'); % patched 2025, Error in print (line 86) pj = alternatePrintPath(pj); 
         saveas(h, fileNameExt);
         fprintf(1, ['\t* Zapisano rastrowy rysunek: "%s%s"\n'], filename, ext);
     end

@@ -2,48 +2,56 @@ function save4article(s)
 % Automation with params to save fig for article
 
 % on macOS load from file (for reliability)
+
+    PL = 1; EN = 2;
+    if(nargin == 0) s.lang = EN; lang=EN; 
+    elseif(isfield(s,"lang")) lang = s.lang; 
+    else lang=EN; end
+
     sourcePath = "figBase/"; 
     exportPath = "article/fig/";
+    if(lang==PL) exportPath = "article/figPL/"; end
+
     prefix = "";  filename = ""; postfix = ""; 
-    saveFigNr = 0; % use true when save directly, whithout load form fig file [nameing convention]
+    saveFigNr = 1; % use true when save directly, whithout load form fig file [nameing convention]
     inch3dot25 = -1;
     timeout = 10;
 
-    PL = 1; EN = 2;
-    if(nargin == 0)
-        s.lang = EN;
-    end
-
     if(isfield(s,"figPath")) sourcePath = s.figPath; end
     if(isfield(s,"exportPath")) exportPath = s.exportPath; end
-    if(isfield(s,"lang")) lang = s.lang; end
     if(isfield(s,"prefix")) prefix = s.prefix; end
     if(isfield(s,"postfix")) postfix = s.postfix; end
     if(isfield(s,"filename")) filename = s.filename; end
-    if(strcmp(exportPath, "article/fi/")) inch3dot25 = -2; end % negative scale for article column
+    % if(strcmp(exportPath, "article/fi/")) inch3dot25 = -1.618; end % negative scale for article column
+    inch3dot25 = 0;
     if(isfield(s,"inch3dot25")) inch3dot25 = s.inch3dot25; end
     if(isfield(s,"timeout")) timeout = s.timeout; end
-
-
+    if(isfield(s,"figNrList")) figNrList = s.figNrList; end
+    
+    if(saveFigNr)ePchar=char(exportPath); exportPath=ePchar(1:end-1)+"Nr/"; end
+   
     if(~isempty(ismember(findall(0,'type','figure'),groot))) % jeśli są otwarte figury, to je eksportuj     
-        F = findobj('Type', 'figure');
+        F = findobj('Type', 'figure'); postfix = char('a'-1);
         for(i=1:numel(F))
+            if(exist("figNrList", "var") && isempty(find(figNrList==F(i)))) continue; end
             figure(F(i))
             mnoznik = 1;
             sVal = 1; style = "stylePiotr"; 
             % style = "styleGrid"; sVal = 1; 
             if(saveFigNr)
-            postfix = i;
+            postfix = F(i).Number;
             else
             postfix = char(postfix + 1);
             end
             if(isempty(filename)) filename = string(i); end
             fontFamily = "Helvetica";
             
+            
+
             figPW("path", exportPath, "exportPDF", 1, "openFolder", 1, "TNR", 1, ... 
             "saveCopyFig", 0, "skipSaveAs", 1, "scale", mnoznik, style, sVal, ...
             "fileName", strcat(prefix, filename, string(postfix)),'font',fontFamily, ...
-            'goldenRatio', inch3dot25, "interpreter", 'tex',"goldenRatio",-1.6);
+            'goldenRatio', inch3dot25, "interpreter", 'tex');
         end
         return
     end
@@ -123,7 +131,7 @@ function save4article(s)
     
     toSave = [];
     for(i = 1:length(num))
-        % if(num(i) is in opened figures in ssave2folder )
+        % if(num(i) is in opened figures in save2folder )
         toSave = [toSave; num(i)];
     end
        

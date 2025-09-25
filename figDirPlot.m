@@ -21,7 +21,7 @@ for(k=1:numel(gfns))
     if(isfolder(cn)) continue; end
     if(strcmp(cn,".")) continue; end
     if(strcmp(cn,"..")) continue; end
-    if((strlength(endOfFilePath))>=strlength(cn)) continue; end;
+    if((strlength(endOfFilePath))>strlength(cn)) continue; end;
     % cd(cn);
 
     if(strcmp(cn(end-strlength(endOfFilePath)+1:end),endOfFilePath))

@@ -1,4 +1,4 @@
-function [newFigNr] = figConvert(figNr, subplotDim1, subplotDim2)
+function [newFigNr] = figConvert(figNr, subplotDim1Dest, subplotDim2Dest, subplotDim1Source, subplotDim2Source)
 % Convert old styled figure by subplot() function, to tiledlayout.
 %   Param: figure number or path to *.fig file
 %   Return: new Figure Number
@@ -23,10 +23,16 @@ else
 end
 
 if(nargin < 3)
-    subplotDim1 = 3;
-    subplotDim2 = 1;
+    subplotDim1Dest = 2;
+    subplotDim2Dest = 3;
 end
-nrOfPlots = subplotDim1*subplotDim2;
+
+if(nargin == 3)
+    subplotDim1Source = subplotDim1Dest;
+    subplotDim2Source = subplotDim2Dest;
+end
+
+nrOfPlots = subplotDim1Dest*subplotDim2Dest;
 
 h = figure(figNr);
 tmp = h.Children;
@@ -45,11 +51,11 @@ SGtitle = '';
 
 newFigHandle = figure;
 
-tcl=tiledlayout(subplotDim1, subplotDim2);
+tcl=tiledlayout(subplotDim1Dest, subplotDim2Dest);
 % tcl = tiledlayout('flow')
 
 for( sp = 1:nrOfPlots)%numel(h.Childrens)
-    figure(figNr); subplot(subplotDim1, subplotDim2, sp);
+    figure(figNr); subplot(subplotDim1Source, subplotDim2Source, sp);
     ax = gca;
 
     figure(newFigHandle);
