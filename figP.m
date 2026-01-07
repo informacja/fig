@@ -71,8 +71,8 @@ if(~inBrowserOrMobileRuned)
         finder(char(path))
     end
 else
-    if(valOpenFile) fprintf(1,"\t- Skipped open file, probably you launched scripts in browser or on smartphone"); end
-    if(valOpenFolder) fprintf(1,"\t- Skipped open folder, probably you launched scripts in browser or on smartphone"); end
+    if(valOpenFile) fprintf(1,"\t- Skipped open file, probably you launched scripts in browser or on smartphone\n"); end
+    if(valOpenFolder) fprintf(1,"\t- Skipped open folder, probably you launched scripts in browser or on smartphone\n"); end
 end
 
 return

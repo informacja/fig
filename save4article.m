@@ -27,6 +27,7 @@ function save4article(s)
     if(isfield(s,"inch3dot25")) inch3dot25 = s.inch3dot25; end
     if(isfield(s,"timeout")) timeout = s.timeout; end
     if(isfield(s,"figNrList")) figNrList = s.figNrList; end
+    if(isfield(s,"figNrGridSize")) figNrGridSize = s.figNrGridSize; end
     
     if(saveFigNr)ePchar=char(exportPath); exportPath=ePchar(1:end-1)+"Nr/"; end
    
@@ -45,13 +46,36 @@ function save4article(s)
             end
             if(isempty(filename)) filename = string(i); end
             fontFamily = "Helvetica";
-            
-            
+            % 
+            % set(gcf,'WindowStyle','normal')
+            % width = 13; % inches
+            % hight =  6.5000;
+            % 
+            % if(exist("figNrGridSize","var"))
+            %     rowNr = find(gcf().Number==cell2mat(figNrGridSize(:,1)));
+            %     if(~isempty(rowNr))
+            %         dim = figNrGridSize(rowNr,2:3);
+            %         set(gcf,'Units','inches');                        % jednostka wymiarowania okna
+            %         set(gcf,'Position', [0 0 width*2*dim{1} hight*2*dim{2}]); % wymiary okna: (x,y,dx,dy), (x,y)- lewy dolny
+            %     end                
+            % else                 
+                % if(~exist("gcf().Children.GridSize","var"))
+                %     if(gcf().Number==25) figNum = figConvert(gcf().Number,2,2,2,4); figure(figNum); 
+                %         set(gcf,'Units','inches');                        % jednostka wymiarowania okna
+                %         set(gcf,'Position', [0 0 width*2 hight*2]); % wymiary okna: (x,y,dx,dy), (x,y)- lewy dolny
+                %     end
+                % else           
+                %     set(gcf,'Units','inches');                        % jednostka wymiarowania okna
+                %     set(gcf,'Position', [0 0 width*gcf().Children.GridSize(1) hight*gcf().Children.GridSize(2)]); % wymiary okna: (x,y,dx,dy), (x,y)- lewy dolny
+                % end
+            % end
 
-            figPW("path", exportPath, "exportPDF", 1, "openFolder", 1, "TNR", 1, ... 
-            "saveCopyFig", 0, "skipSaveAs", 1, "scale", mnoznik, style, sVal, ...
-            "fileName", strcat(prefix, filename, string(postfix)),'font',fontFamily, ...
-            'goldenRatio', inch3dot25, "interpreter", 'tex');
+
+
+            figPW("path", exportPath, "exportPDF", 1, 'vectorReplacedByTIFFigBytes', 10e9, "openFolder", 1, "TNR", 0, ... 
+            "saveCopyFig", 0, "skipSaveAs", 1,... %"scale", mnoznik, style, sVal, ...
+            "fileName", strcat(prefix, filename, string(postfix)));%,'font',fontFamily, ...
+            % 'goldenRatio', inch3dot25, "interpreter", 'tex');
         end
         return
     end

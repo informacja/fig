@@ -32,7 +32,7 @@ function figPW(varargin)% FigType, ext, katalog)
 %   saveCopyFig - defalut = true (backup file)
 %   argSkipSaveAs - doesn't save default file, default = false
 %   nrF - just select figure you want to save
-%   vectorReplacedByTIFFigBytes - size of figure, default = 50 000, 
+%   vectorReplacedByTIFFigBytes - size of figure, default = 500 000, 
 %       only for export fig argument
 %   scale - set the scalar, default = 1
 %   valScaleX - scale horizontally
@@ -150,7 +150,7 @@ valTimestamp = false;
 valSaveCopyFig = true;
 valSkipSaveAs = false;
 valNrF = 1;
-valVectorReplacedByTIFFigBytes = 5e4;
+valVectorReplacedByTIFFigBytes = 5e5;
 valScale = 1; 
 valScaleX = 1; 
 valScaleY = 1; 
