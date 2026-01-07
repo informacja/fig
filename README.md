@@ -1,6 +1,6 @@
 # figLib 💽  [![Alpha - Early access](https://img.shields.io/static/v1?label=Alpha&message=Early+access&color=2ea44f)](https://github.com/informacja/fig/tree/main?tab=readme-ov-file#library-installation)
 
-Library created for saving figures in Matlab. 
+Library created for saving figures in Matlab eg. for article 
 
 ### Article data flow proposed to use with figLib
 What is interesting you don't have to open the github.com, is possible to use only Github Desktop and Overleaf (in real work process). 
