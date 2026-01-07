@@ -3,7 +3,7 @@
 Library created for saving figures in Matlab. 
 
 ### Article data flow proposed to use with figLib
-What is interesting you don't have to open the github.com, is possible to use only Github Desktiop and Overleaf (in real work process). 
+What is interesting you don't have to open the github.com, is possible to use only Github Desktop and Overleaf (in real work process). 
 
 Everything what is needed, is an account on github and enabled synchronization with Desktop app and Overleaf.
 
